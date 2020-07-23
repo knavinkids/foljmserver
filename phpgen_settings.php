@@ -62,6 +62,7 @@ function GetPageInfos()
 {
     $result = array();
     $result[] = array('caption' => 'Brg', 'short_caption' => 'Brg', 'filename' => 'brg.php', 'name' => 'brg', 'group_name' => 'Default', 'add_separator' => false, 'description' => '');
+    $result[] = array('caption' => 'Barang', 'short_caption' => 'Barang', 'filename' => 'barang.php', 'name' => 'barang', 'group_name' => 'Default', 'add_separator' => false, 'description' => '');
     return $result;
 }
 
