@@ -32,6 +32,11 @@ class Captions
         return self::$instances[$encoding];
     }
 
+    public function RenderText($text)
+    {
+        return $text;
+    }
+
     public function GetEncoding()
     {
         return $this->encoding;

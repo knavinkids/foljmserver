@@ -6,9 +6,6 @@ include_once dirname(__FILE__) . '/../utils/string_utils.php';
 
 abstract class AbstractCsvRenderer extends AbstractExportRenderer
 {
-    /** @var string */
-    private $delimiter = ',';
-
     abstract protected function getGridPagePart();
 
     public function RenderPage(Page $Page)
@@ -23,14 +20,12 @@ abstract class AbstractCsvRenderer extends AbstractExportRenderer
 
         $options = array(
             'filename' => Path::ReplaceFileNameIllegalCharacters($Page->GetTitle() . ".csv"),
-            'delimiter' => $this->delimiter
         );
         $Page->GetCustomExportOptions(
             'csv',
             $this->getCurrentRowData($Page->GetGrid()),
             $options
         );
-        $this->delimiter = $options['delimiter'];
 
         header("Content-Disposition: attachment;Filename=" . $options['filename']);
         header("Expires: 0");
@@ -49,12 +44,7 @@ abstract class AbstractCsvRenderer extends AbstractExportRenderer
         $Grid = $this->Render($Page->GetGrid());
         $this->DisplayTemplate($template,
             array('Page' => $Page),
-            array_merge(
-                $customParams,
-                array(
-                    'Grid' => $Grid
-                )
-            )
+            array_merge($customParams, array('Grid' => $Grid))
         );
     }
 
@@ -87,8 +77,7 @@ abstract class AbstractCsvRenderer extends AbstractExportRenderer
             array('Grid' => $Grid),
             array_merge($customParams, array(
                 'HeaderCaptions' => $HeaderCaptions,
-                'Rows' => $Rows,
-                'Delimiter' => $this->delimiter
+                'Rows' => $Rows
             ))
         );
     }

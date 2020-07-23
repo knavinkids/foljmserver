@@ -8,26 +8,10 @@
                 <tr>
                     {if $depth == 0}
                         {if $DataGrid.AllowSelect}
-                            <th class="row-selection" style="width:{if count($DataGrid.SelectionFilters) > 0}45px{else}1%{/if};" rowspan="{$DataGrid.ColumnGroup->getDepth()}">
-                                {if count($DataGrid.SelectionFilters) > 0}
-                                    <ul class="list-inline">
-                                        <li><input type="checkbox"></li>
-                                        <li>
-                                            <a href="#" class="selection-filters link-icon">
-                                                <i class="icon-detail-additional"></i>
-                                            </a>
-                                            <div id="selection-filters-content" class="hide">
-                                                <ul class="list-unstyled dropdown-menu selection-filters">
-                                                    {foreach from=$DataGrid.SelectionFilters item=filter}
-                                                    <li><a href="#" class="js-action" data-filter-name="{$filter}" data-url="{$Page->getLink()}" data-handler-name="{$Page->GetRecordsSelectionHandler()}"}>{$filter}</a></li>
-                                                    {/foreach}
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                {else}
+                            <th style="width:1%;" rowspan="{$DataGrid.ColumnGroup->getDepth()}">
+                                <div class="row-selection">
                                     <input type="checkbox">
-                                {/if}
+                                </div>
                             </th>
                         {/if}
 
@@ -109,7 +93,7 @@
     </table>
     <script id="{$DataGrid.Id}_row_template" type="text/html">
         <tr>
-            <td class="pg-inline-edit-container">
+            <td class="pg-inline-edit-container" colspan="<%=getColumnCount()%>">
                 <div class="col-md-10 col-md-offset-1 js-inline-edit-container pg-inline-edit-container-loading">
                     <img src="components/assets/img/loading.gif">
                 </div>

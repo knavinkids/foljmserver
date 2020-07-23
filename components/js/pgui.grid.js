@@ -69,13 +69,11 @@ define([
             this.filters = {};
             this.options = options ? options : {};
 
-            this.reloadPageAfterAjaxOperation = this.container.data('reload-page-after-ajax-operation');
-
             this.$header = this.container.find('thead').first();
             this.selectionActions = new SelectionHandler(
                 new Selection(this.getSelectionId()),
                 this.container.find('.js-selection-actions-container'),
-                this.$header.find('th.row-selection'),
+                this.$header.find('.row-selection input[type=checkbox]'),
                 this.container.find('.pg-row .row-selection input[type=checkbox]'),
                 true, self
             );
@@ -117,9 +115,7 @@ define([
         },
 
         getRowTemplate: function () {
-            var $rowTemplate = $(_.template($('#' + this.getId() + '_row_template').html())(this));
-            $rowTemplate.find('td.pg-inline-edit-container').attr('colspan', this.getColumnCount());
-            return $rowTemplate;
+            return $(_.template($('#' + this.getId() + '_row_template').html())(this));
         },
 
         getColumnCount: function() {
@@ -136,10 +132,6 @@ define([
 
         getColumnFilter: function () {
             return this.filters.columnFilter;
-        },
-
-        getReloadPageAfterAjaxOperation: function () {
-            return this.reloadPageAfterAjaxOperation;
         },
 
         getRows: function () {
@@ -236,7 +228,13 @@ define([
             });
 
             $rows.find('[data-modal-operation=view]').each(function (index, item) {
-                initModalView($(item));
+                var $item = $(item);
+                if ($item.data('modal-view')) {
+                    return;
+                }
+
+                initModalView($item);
+                $item.data('modal-view', true);
             });
 
             var modalDeleteLinks = $rows.find('[data-modal-operation=delete]');
@@ -302,10 +300,6 @@ define([
                 })
                 .on('click', '.js-reset-filter', function (e) {
                     getFilterByEvent(e).reset().submit();
-                    e.preventDefault();
-                })
-                .on('click', '.js-reset-selection-filter', function (e) {
-                    location.href = $.query.remove('keys').set('selection_filter', '');
                     e.preventDefault();
                 })
             ;

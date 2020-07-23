@@ -367,19 +367,13 @@ class MySqlIConnection extends EngConnection {
         return $result;
     }
 
-    public function ExecScalarSQL($sql) {
-        $this->logQuery($sql);
+    protected function doExecScalarSQL($sql) {
         if ($queryHandle = @mysqli_query($this->GetConnectionHandle(), $sql)) {
             $queryResult = @mysqli_fetch_array($queryHandle, MYSQLI_NUM);
             @mysqli_free_result($queryHandle);
-            if (isset($queryResult)) {
-                return $queryResult[0];
-            } else {
-                $this->raiseSQLStatementReturnsNoRowsException($sql);
-            }
-        } else {
-            $this->raiseSQLExecutionException($sql);
+            return $queryResult[0];
         }
+        return false;
     }
 
     protected function doExecQueryToArray($sql, &$array) {
@@ -471,11 +465,7 @@ class MySqlIDataReader extends EngDataReader {
     }
 
     public function GetFieldValueByName($fieldName) {
-        if ($this->lastFetchedRow) {
-            return $this->GetActualFieldValue($fieldName, $this->lastFetchedRow[$fieldName]);
-        } else {
-            return null;
-        }
+        return $this->GetActualFieldValue($fieldName, $this->lastFetchedRow[$fieldName]);
     }
 }
 

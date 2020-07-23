@@ -37,6 +37,14 @@ class HomePage extends CommonPage
             : $this->selectedGroup;
     }
 
+    /**
+     * @return PageList
+     */
+    public function GetReadyPageList()
+    {
+        return PageList::createForPage($this);
+    }
+
     public function getSelectedGroup()
     {
         return $this->selectedGroup;
@@ -59,13 +67,12 @@ class HomePage extends CommonPage
 
     public function GetAuthenticationViewData() {
         return array(
-            'Enabled' => GetApplication()->isAuthenticationEnabled(),
+            'Enabled' => function_exists('SetUpUserAuthorization'),
             'LoggedIn' => GetApplication()->IsCurrentUserLoggedIn(),
             'CurrentUser' => array(
                 'Name' => GetApplication()->GetCurrentUser(),
                 'Id' => GetApplication()->GetCurrentUserId(),
             ),
-            'CanChangeOwnPassword' => GetApplication()->GetUserAuthentication()->canUserChangeOwnPassword(),
             'isAdminPanelVisible' => GetApplication()->HasAdminPanelForCurrentUser(),
         );
     }

@@ -20,8 +20,7 @@ define([
     'pgui.editors/dynamic_cascading_combobox',
     'pgui.editors/static_editor',
     'pgui.editors/multi_uploader',
-    'pgui.editors/autocomplete',
-    'pgui.editors/signature'
+    'pgui.editors/autocomplete'
 ], function (
     Class,
     events,
@@ -44,8 +43,7 @@ define([
     DynamicCascadingCombobox,
     StaticEditor,
     MultiUploader,
-    Autocomplete,
-    Signature
+    Autocomplete
 ) {
 
     var editorNames = {
@@ -70,15 +68,13 @@ define([
         dynamic_cascading_combobox: DynamicCascadingCombobox,
         static_editor: StaticEditor,
         multiuploader: MultiUploader,
-        autocomplete: Autocomplete,
-        signature: Signature
+        autocomplete: Autocomplete
     };
 
     var EditorsController = events.mixin(Class.extend({
         init: function (context) {
             this.context = context;
             this.editors = {};
-            this.calculateControlValuesIntervalId = -1;
         },
 
         captureEditors: function (readyCallback) {
@@ -125,7 +121,6 @@ define([
         },
 
         destroy: function () {
-            clearInterval(this.calculateControlValuesIntervalId);
             _.each(this.editors, function (editor) {
                 editor.destroy();
             });
@@ -167,7 +162,7 @@ define([
                 if (_.isFunction(calculateControlValuesCallback)) {
                     try {
                         calculateControlValuesCallback(editors);
-                        editorsController.calculateControlValuesIntervalId = setInterval(
+                        setInterval(
                             function () {
                                 calculateControlValuesCallback(editors);
                             }, 1000);

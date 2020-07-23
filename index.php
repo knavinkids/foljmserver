@@ -10,15 +10,17 @@
 
 include_once dirname(__FILE__) . '/components/startup.php';
 include_once dirname(__FILE__) . '/components/application.php';
-include_once dirname(__FILE__) . '/authorization.php';
 include_once dirname(__FILE__) . '/components/page/home_page.php';
 include_once dirname(__FILE__) . '/components/error_utils.php';
 
-SetUpUserAuthorization();
+if (file_exists(dirname(__FILE__) . '/authorization.php')) {
+    include_once dirname(__FILE__) . '/authorization.php';
+    SetUpUserAuthorization();
+}
 
 try {
 
-    $page = new HomePage(GetCurrentUserPermissionsForPage("index"), 'UTF-8');
+    $page = new HomePage(GetCurrentUserPermissionSetForDataSource("index"), 'UTF-8');
     $page->SetHeader(GetPagesHeader());
     $page->SetFooter(GetPagesFooter());
     $page->setBanner(GetHomePageBanner());

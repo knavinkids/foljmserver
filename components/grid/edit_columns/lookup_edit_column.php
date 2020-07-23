@@ -110,9 +110,4 @@ class LookUpEditColumn extends CustomEditColumn
             'DisplayFieldName' => $this->displayFieldName,
         ));
     }
-
-    /** @return Dataset */
-    public function getLookupDataset() {
-        return $this->lookUpDataset;
-    }
 }

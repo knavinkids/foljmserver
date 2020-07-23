@@ -51,7 +51,6 @@ class RegistrationForm
                 'success' => true,
                 'message' => ''
             );
-            $this->processReCaptcha();
             $this->checkUserExists($username);
             $this->checkEmailExists($email);
             $this->getRegistrationPage()->registerNewUser($username, $password, $email);
@@ -59,16 +58,6 @@ class RegistrationForm
         } catch (Exception $e) {
             $this->response['success'] = false;
             $this->response['message'] = $e->getMessage();
-        }
-    }
-
-    /** @throw LogicException */
-    private function processReCaptcha() {
-        if ($this->getRegistrationPage()->getReCaptcha()) {
-            $recaptchaResponse = $this->getRegistrationPage()->getReCaptcha()->verifyResponse();
-            if (!$recaptchaResponse->isSuccess()) {
-                throw new LogicException($recaptchaResponse->getErrorMessage());
-            }
         }
     }
 

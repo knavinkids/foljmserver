@@ -4,30 +4,35 @@
         <meta http-equiv="content-type" content="text/html{if $Page->GetContentEncoding() != null}; charset={$Page->GetContentEncoding()}{/if}">
     </head>
 <style>
-{literal}
-img {
+img
+{ldelim}
     border-width: 0px;
-}
-body {
+{rdelim}
+body
+{ldelim}
     font-family: Verdana;
-}
-table {
+{rdelim}
+table
+{ldelim}
     border-collapse: collapse;
-}
-td {
+{rdelim}
+td
+{ldelim}
     font-size: 11;
     padding: 5px;
     margin: 0px;
     border-width: 1px;
     border-style: solid;
     border-color: #000000;
-}
-@media print {
-    a.pdf {
+{rdelim}
+@media print
+{ldelim}
+    a.pdf
+    {ldelim}
         display:none
-    }
-}
-{/literal}
+    {rdelim}
+{rdelim}
+
 </style>
 <body style="background-color:white">
     <h1>{$Page->GetTitle()}</h1>

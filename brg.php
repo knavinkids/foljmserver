@@ -10,11 +10,13 @@
 
     include_once dirname(__FILE__) . '/components/startup.php';
     include_once dirname(__FILE__) . '/components/application.php';
-    include_once dirname(__FILE__) . '/' . 'authorization.php';
 
 
     include_once dirname(__FILE__) . '/' . 'database_engine/mysql_engine.php';
-    include_once dirname(__FILE__) . '/' . 'components/page/page_includes.php';
+    include_once dirname(__FILE__) . '/' . 'components/page/page.php';
+    include_once dirname(__FILE__) . '/' . 'components/page/detail_page.php';
+    include_once dirname(__FILE__) . '/' . 'components/page/nested_form_page.php';
+
 
     function GetConnectionOptions()
     {
@@ -36,11 +38,6 @@
     {
         protected function DoBeforeCreate()
         {
-            $this->SetTitle('Brggaleri');
-            $this->SetMenuLabel('Brggaleri');
-            $this->SetHeader(GetPagesHeader());
-            $this->SetFooter(GetPagesFooter());
-    
             $this->dataset = new TableDataset(
                 MySqlIConnectionFactory::getInstance(),
                 GetConnectionOptions(),
@@ -141,10 +138,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_brggaleri_idbarang_search');
+            $main_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idbarang', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_brggaleri_idbarang_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $filterBuilder->addColumn(
                 $columns['idbarang'],
@@ -339,6 +336,7 @@
             $column = new TextViewColumn('namafile', 'namafile', 'Namafile', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brggaleri_namafile_handler_list');
             $column->setMinimalVisibility(ColumnVisibility::PHONE);
             $column->SetDescription('');
             $column->SetFixedWidth(null);
@@ -361,6 +359,7 @@
             $column = new TextViewColumn('tipefile', 'tipefile', 'Tipefile', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brggaleri_tipefile_handler_list');
             $column->setMinimalVisibility(ColumnVisibility::PHONE);
             $column->SetDescription('');
             $column->SetFixedWidth(null);
@@ -418,6 +417,7 @@
             $column = new TextViewColumn('namafile', 'namafile', 'Namafile', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brggaleri_namafile_handler_view');
             $grid->AddSingleRecordViewColumn($column);
             
             //
@@ -434,6 +434,7 @@
             $column = new TextViewColumn('tipefile', 'tipefile', 'Tipefile', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brggaleri_tipefile_handler_view');
             $grid->AddSingleRecordViewColumn($column);
             
             //
@@ -482,7 +483,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_brg_brggaleri_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -534,7 +535,7 @@
             //
             $editor = new ImageUploader('filex_edit');
             $editor->SetShowImage(false);
-            $editColumn = new FileUploadingColumn('Filex', 'filex', $editor, $this->dataset, false, false, 'brg_brggaleri_filex_handler_edit');
+            $editColumn = new FileUploadingColumn('Filex', 'filex', $editor, $this->dataset, false, false, 'DetailGridbrg.brggaleri_filex_handler_edit');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -569,7 +570,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'multi_edit_brg_brggaleri_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'multi_edit_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -621,7 +622,7 @@
             //
             $editor = new ImageUploader('filex_edit');
             $editor->SetShowImage(false);
-            $editColumn = new FileUploadingColumn('Filex', 'filex', $editor, $this->dataset, false, false, 'brg_brggaleri_filex_handler_multi_edit');
+            $editColumn = new FileUploadingColumn('Filex', 'filex', $editor, $this->dataset, false, false, 'DetailGridbrg.brggaleri_filex_handler_multi_edit');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -656,7 +657,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_brg_brggaleri_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -708,7 +709,7 @@
             //
             $editor = new ImageUploader('filex_edit');
             $editor->SetShowImage(false);
-            $editColumn = new FileUploadingColumn('Filex', 'filex', $editor, $this->dataset, false, false, 'brg_brggaleri_filex_handler_insert');
+            $editColumn = new FileUploadingColumn('Filex', 'filex', $editor, $this->dataset, false, false, 'DetailGridbrg.brggaleri_filex_handler_insert');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -749,6 +750,7 @@
             $column = new TextViewColumn('namafile', 'namafile', 'Namafile', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brggaleri_namafile_handler_print');
             $grid->AddPrintColumn($column);
             
             //
@@ -765,6 +767,7 @@
             $column = new TextViewColumn('tipefile', 'tipefile', 'Tipefile', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brggaleri_tipefile_handler_print');
             $grid->AddPrintColumn($column);
             
             //
@@ -813,6 +816,7 @@
             $column = new TextViewColumn('namafile', 'namafile', 'Namafile', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brggaleri_namafile_handler_export');
             $grid->AddExportColumn($column);
             
             //
@@ -829,6 +833,7 @@
             $column = new TextViewColumn('tipefile', 'tipefile', 'Tipefile', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brggaleri_tipefile_handler_export');
             $grid->AddExportColumn($column);
             
             //
@@ -867,6 +872,7 @@
             $column = new TextViewColumn('namafile', 'namafile', 'Namafile', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brggaleri_namafile_handler_compare');
             $grid->AddCompareColumn($column);
             
             //
@@ -883,6 +889,7 @@
             $column = new TextViewColumn('tipefile', 'tipefile', 'Tipefile', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brggaleri_tipefile_handler_compare');
             $grid->AddCompareColumn($column);
             
             //
@@ -995,85 +1002,58 @@
         }
     
         protected function doRegisterHandlers() {
-            $handler = new DownloadHTTPHandler($this->dataset, 'filex', 'filex_handler', '', '', true);
+            //
+            // View column for namafile field
+            //
+            $column = new TextViewColumn('namafile', 'namafile', 'Namafile', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brggaleri_namafile_handler_list', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for tipefile field
+            //
+            $column = new TextViewColumn('tipefile', 'tipefile', 'Tipefile', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brggaleri_tipefile_handler_list', $column);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $handler = new DownloadHTTPHandler($this->dataset, 'filex', 'filex_handler', '', '', true);
             GetApplication()->RegisterHTTPHandler($handler);
             
+            //
+            // View column for namafile field
+            //
+            $column = new TextViewColumn('namafile', 'namafile', 'Namafile', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brggaleri_namafile_handler_print', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for tipefile field
+            //
+            $column = new TextViewColumn('tipefile', 'tipefile', 'Tipefile', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brggaleri_tipefile_handler_print', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
             $handler = new DownloadHTTPHandler($this->dataset, 'filex', 'filex_handler', '', '', true);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $lookupDataset = new TableDataset(
-                MySqlIConnectionFactory::getInstance(),
-                GetConnectionOptions(),
-                '`brg`');
-            $lookupDataset->addFields(
-                array(
-                    new IntegerField('id', true, true),
-                    new IntegerField('idgol', true),
-                    new StringField('kode', true),
-                    new StringField('nama'),
-                    new StringField('merk'),
-                    new StringField('golongan'),
-                    new StringField('kelompok'),
-                    new StringField('jenis'),
-                    new IntegerField('aktif'),
-                    new IntegerField('defsatuan'),
-                    new IntegerField('defgalery')
-                )
-            );
-            $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_brggaleri_idbarang_search', 'id', 'idgol', null, 20);
+            //
+            // View column for namafile field
+            //
+            $column = new TextViewColumn('namafile', 'namafile', 'Namafile', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brggaleri_namafile_handler_compare', $column);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $handler = new ImageHTTPHandler($this->dataset, 'filex', 'brg_brggaleri_filex_handler_insert', new NullFilter());
-            GetApplication()->RegisterHTTPHandler($handler);
-            
-            $lookupDataset = new TableDataset(
-                MySqlIConnectionFactory::getInstance(),
-                GetConnectionOptions(),
-                '`brg`');
-            $lookupDataset->addFields(
-                array(
-                    new IntegerField('id', true, true),
-                    new IntegerField('idgol', true),
-                    new StringField('kode', true),
-                    new StringField('nama'),
-                    new StringField('merk'),
-                    new StringField('golongan'),
-                    new StringField('kelompok'),
-                    new StringField('jenis'),
-                    new IntegerField('aktif'),
-                    new IntegerField('defsatuan'),
-                    new IntegerField('defgalery')
-                )
-            );
-            $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_brggaleri_idbarang_search', 'id', 'idgol', null, 20);
-            GetApplication()->RegisterHTTPHandler($handler);
-            
-            $lookupDataset = new TableDataset(
-                MySqlIConnectionFactory::getInstance(),
-                GetConnectionOptions(),
-                '`brg`');
-            $lookupDataset->addFields(
-                array(
-                    new IntegerField('id', true, true),
-                    new IntegerField('idgol', true),
-                    new StringField('kode', true),
-                    new StringField('nama'),
-                    new StringField('merk'),
-                    new StringField('golongan'),
-                    new StringField('kelompok'),
-                    new StringField('jenis'),
-                    new IntegerField('aktif'),
-                    new IntegerField('defsatuan'),
-                    new IntegerField('defgalery')
-                )
-            );
-            $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_brggaleri_idbarang_search', 'id', 'idgol', null, 20);
+            //
+            // View column for tipefile field
+            //
+            $column = new TextViewColumn('tipefile', 'tipefile', 'Tipefile', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brggaleri_tipefile_handler_compare', $column);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $handler = new DownloadHTTPHandler($this->dataset, 'filex', 'filex_handler', '', '', true);
@@ -1099,10 +1079,10 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_brggaleri_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $handler = new ImageHTTPHandler($this->dataset, 'filex', 'brg_brggaleri_filex_handler_edit', new NullFilter());
+            $handler = new ImageHTTPHandler($this->dataset, 'filex', 'DetailGridbrg.brggaleri_filex_handler_insert', new NullFilter());
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -1125,10 +1105,101 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_brggaleri_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $handler = new ImageHTTPHandler($this->dataset, 'filex', 'brg_brggaleri_filex_handler_multi_edit', new NullFilter());
+            $lookupDataset = new TableDataset(
+                MySqlIConnectionFactory::getInstance(),
+                GetConnectionOptions(),
+                '`brg`');
+            $lookupDataset->addFields(
+                array(
+                    new IntegerField('id', true, true),
+                    new IntegerField('idgol', true),
+                    new StringField('kode', true),
+                    new StringField('nama'),
+                    new StringField('merk'),
+                    new StringField('golongan'),
+                    new StringField('kelompok'),
+                    new StringField('jenis'),
+                    new IntegerField('aktif'),
+                    new IntegerField('defsatuan'),
+                    new IntegerField('defgalery')
+                )
+            );
+            $lookupDataset->setOrderByField('idgol', 'ASC');
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idbarang_idgol_search', 'id', 'idgol', null, 20);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for namafile field
+            //
+            $column = new TextViewColumn('namafile', 'namafile', 'Namafile', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brggaleri_namafile_handler_view', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for tipefile field
+            //
+            $column = new TextViewColumn('tipefile', 'tipefile', 'Tipefile', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brggaleri_tipefile_handler_view', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $handler = new DownloadHTTPHandler($this->dataset, 'filex', 'filex_handler', '', '', true);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $lookupDataset = new TableDataset(
+                MySqlIConnectionFactory::getInstance(),
+                GetConnectionOptions(),
+                '`brg`');
+            $lookupDataset->addFields(
+                array(
+                    new IntegerField('id', true, true),
+                    new IntegerField('idgol', true),
+                    new StringField('kode', true),
+                    new StringField('nama'),
+                    new StringField('merk'),
+                    new StringField('golongan'),
+                    new StringField('kelompok'),
+                    new StringField('jenis'),
+                    new IntegerField('aktif'),
+                    new IntegerField('defsatuan'),
+                    new IntegerField('defgalery')
+                )
+            );
+            $lookupDataset->setOrderByField('idgol', 'ASC');
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idbarang_idgol_search', 'id', 'idgol', null, 20);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $handler = new ImageHTTPHandler($this->dataset, 'filex', 'DetailGridbrg.brggaleri_filex_handler_edit', new NullFilter());
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $lookupDataset = new TableDataset(
+                MySqlIConnectionFactory::getInstance(),
+                GetConnectionOptions(),
+                '`brg`');
+            $lookupDataset->addFields(
+                array(
+                    new IntegerField('id', true, true),
+                    new IntegerField('idgol', true),
+                    new StringField('kode', true),
+                    new StringField('nama'),
+                    new StringField('merk'),
+                    new StringField('golongan'),
+                    new StringField('kelompok'),
+                    new StringField('jenis'),
+                    new IntegerField('aktif'),
+                    new IntegerField('defsatuan'),
+                    new IntegerField('defgalery')
+                )
+            );
+            $lookupDataset->setOrderByField('idgol', 'ASC');
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idbarang_idgol_search', 'id', 'idgol', null, 20);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $handler = new ImageHTTPHandler($this->dataset, 'filex', 'DetailGridbrg.brggaleri_filex_handler_multi_edit', new NullFilter());
             GetApplication()->RegisterHTTPHandler($handler);
         }
        
@@ -1162,7 +1233,7 @@
     
         }
     
-        protected function doCustomDefaultValues(&$values, &$handled) 
+        public function doCustomDefaultValues(&$values, &$handled) 
         {
     
         }
@@ -1237,11 +1308,6 @@
     
         }
     
-        protected function doGetSelectionFilters(FixedKeysArray $columns, &$result)
-        {
-    
-        }
-    
         protected function doGetCustomFormLayout($mode, FixedKeysArray $columns, FormLayout $layout)
         {
     
@@ -1262,12 +1328,12 @@
     
         }
     
-        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
+        protected function doGetCustomPagePermissions(Page $page, PermissionSet &$permissions, &$handled)
         {
     
         }
     
-        protected function doAddEnvironmentVariables(Page $page, &$variables)
+        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
         {
     
         }
@@ -1285,11 +1351,6 @@
     {
         protected function DoBeforeCreate()
         {
-            $this->SetTitle('Brginfo');
-            $this->SetMenuLabel('Brginfo');
-            $this->SetHeader(GetPagesHeader());
-            $this->SetFooter(GetPagesFooter());
-    
             $this->dataset = new TableDataset(
                 MySqlIConnectionFactory::getInstance(),
                 GetConnectionOptions(),
@@ -1389,10 +1450,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_brginfo_id_search');
+            $main_editor->SetHandlerName('filter_builder_id_idgol_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('id', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_brginfo_id_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_id_idgol_search');
             
             $filterBuilder->addColumn(
                 $columns['id'],
@@ -1717,6 +1778,7 @@
             $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brginfo_deskripsi_handler_list');
             $column->setMinimalVisibility(ColumnVisibility::PHONE);
             $column->SetDescription('');
             $column->SetFixedWidth(null);
@@ -1810,6 +1872,7 @@
             $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brginfo_supplier_handler_list');
             $column->setMinimalVisibility(ColumnVisibility::PHONE);
             $column->SetDescription('');
             $column->SetFixedWidth(null);
@@ -1870,6 +1933,7 @@
             $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brginfo_deskripsi_handler_view');
             $grid->AddSingleRecordViewColumn($column);
             
             //
@@ -1939,6 +2003,7 @@
             $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brginfo_supplier_handler_view');
             $grid->AddSingleRecordViewColumn($column);
             
             //
@@ -1997,7 +2062,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_idgol', 'edit_brg_brginfo_id_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_idgol', 'edit_id_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -2018,7 +2083,7 @@
             //
             $editor = new ImageUploader('gambar_edit');
             $editor->SetShowImage(false);
-            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'brg_brginfo_gambar_handler_edit');
+            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'DetailGridbrg.brginfo_gambar_handler_edit');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -2145,7 +2210,7 @@
             //
             $editor = new ImageUploader('gambar_edit');
             $editor->SetShowImage(false);
-            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'brg_brginfo_gambar_handler_multi_edit');
+            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'DetailGridbrg.brginfo_gambar_handler_multi_edit');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -2283,7 +2348,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_idgol', 'insert_brg_brginfo_id_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_idgol', 'insert_id_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -2304,7 +2369,7 @@
             //
             $editor = new ImageUploader('gambar_edit');
             $editor->SetShowImage(false);
-            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'brg_brginfo_gambar_handler_insert');
+            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'DetailGridbrg.brginfo_gambar_handler_insert');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -2438,6 +2503,7 @@
             $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brginfo_deskripsi_handler_print');
             $grid->AddPrintColumn($column);
             
             //
@@ -2507,6 +2573,7 @@
             $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brginfo_supplier_handler_print');
             $grid->AddPrintColumn($column);
             
             //
@@ -2555,6 +2622,7 @@
             $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brginfo_deskripsi_handler_export');
             $grid->AddExportColumn($column);
             
             //
@@ -2624,6 +2692,7 @@
             $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brginfo_supplier_handler_export');
             $grid->AddExportColumn($column);
             
             //
@@ -2672,6 +2741,7 @@
             $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brginfo_deskripsi_handler_compare');
             $grid->AddCompareColumn($column);
             
             //
@@ -2741,6 +2811,7 @@
             $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('DetailGridbrg.brginfo_supplier_handler_compare');
             $grid->AddCompareColumn($column);
             
             //
@@ -2863,113 +2934,63 @@
         }
     
         protected function doRegisterHandlers() {
-            $handler = new DownloadHTTPHandler($this->dataset, 'gambar', 'gambar_handler', '', '', true);
+            //
+            // View column for deskripsi field
+            //
+            $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brginfo_deskripsi_handler_list', $column);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $handler = new DownloadHTTPHandler($this->dataset, 'gambar', 'gambar_handler', '', '', true);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $handler = new DownloadHTTPHandler($this->dataset, 'gambar', 'gambar_handler', '', '', true);
+            //
+            // View column for supplier field
+            //
+            $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brginfo_supplier_handler_list', $column);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $lookupDataset = new TableDataset(
-                MySqlIConnectionFactory::getInstance(),
-                GetConnectionOptions(),
-                '`brg`');
-            $lookupDataset->addFields(
-                array(
-                    new IntegerField('id', true, true),
-                    new IntegerField('idgol', true),
-                    new StringField('kode', true),
-                    new StringField('nama'),
-                    new StringField('merk'),
-                    new StringField('golongan'),
-                    new StringField('kelompok'),
-                    new StringField('jenis'),
-                    new IntegerField('aktif'),
-                    new IntegerField('defsatuan'),
-                    new IntegerField('defgalery')
-                )
-            );
-            $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_brginfo_id_search', 'id', 'idgol', null, 20);
-            GetApplication()->RegisterHTTPHandler($handler);
-            
-            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'brg_brginfo_gambar_handler_insert', new NullFilter());
-            GetApplication()->RegisterHTTPHandler($handler);
-            
-            $lookupDataset = new TableDataset(
-                MySqlIConnectionFactory::getInstance(),
-                GetConnectionOptions(),
-                '`brg`');
-            $lookupDataset->addFields(
-                array(
-                    new IntegerField('id', true, true),
-                    new IntegerField('idgol', true),
-                    new StringField('kode', true),
-                    new StringField('nama'),
-                    new StringField('merk'),
-                    new StringField('golongan'),
-                    new StringField('kelompok'),
-                    new StringField('jenis'),
-                    new IntegerField('aktif'),
-                    new IntegerField('defsatuan'),
-                    new IntegerField('defgalery')
-                )
-            );
-            $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_brginfo_id_search', 'id', 'idgol', null, 20);
-            GetApplication()->RegisterHTTPHandler($handler);
-            
-            $lookupDataset = new TableDataset(
-                MySqlIConnectionFactory::getInstance(),
-                GetConnectionOptions(),
-                '`brg`');
-            $lookupDataset->addFields(
-                array(
-                    new IntegerField('id', true, true),
-                    new IntegerField('idgol', true),
-                    new StringField('kode', true),
-                    new StringField('nama'),
-                    new StringField('merk'),
-                    new StringField('golongan'),
-                    new StringField('kelompok'),
-                    new StringField('jenis'),
-                    new IntegerField('aktif'),
-                    new IntegerField('defsatuan'),
-                    new IntegerField('defgalery')
-                )
-            );
-            $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_brginfo_id_search', 'id', 'idgol', null, 20);
-            GetApplication()->RegisterHTTPHandler($handler);
-            
-            $lookupDataset = new TableDataset(
-                MySqlIConnectionFactory::getInstance(),
-                GetConnectionOptions(),
-                '`brg`');
-            $lookupDataset->addFields(
-                array(
-                    new IntegerField('id', true, true),
-                    new IntegerField('idgol', true),
-                    new StringField('kode', true),
-                    new StringField('nama'),
-                    new StringField('merk'),
-                    new StringField('golongan'),
-                    new StringField('kelompok'),
-                    new StringField('jenis'),
-                    new IntegerField('aktif'),
-                    new IntegerField('defsatuan'),
-                    new IntegerField('defgalery')
-                )
-            );
-            $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_brginfo_id_search', 'id', 'idgol', null, 20);
+            //
+            // View column for deskripsi field
+            //
+            $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brginfo_deskripsi_handler_print', $column);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $handler = new DownloadHTTPHandler($this->dataset, 'gambar', 'gambar_handler', '', '', true);
             GetApplication()->RegisterHTTPHandler($handler);
             
+            //
+            // View column for supplier field
+            //
+            $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brginfo_supplier_handler_print', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for deskripsi field
+            //
+            $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brginfo_deskripsi_handler_compare', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $handler = new DownloadHTTPHandler($this->dataset, 'gambar', 'gambar_handler', '', '', true);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for supplier field
+            //
+            $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brginfo_supplier_handler_compare', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
             $lookupDataset = new TableDataset(
                 MySqlIConnectionFactory::getInstance(),
                 GetConnectionOptions(),
@@ -2990,13 +3011,127 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_brginfo_id_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_id_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'brg_brginfo_gambar_handler_edit', new NullFilter());
+            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'DetailGridbrg.brginfo_gambar_handler_insert', new NullFilter());
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'brg_brginfo_gambar_handler_multi_edit', new NullFilter());
+            $lookupDataset = new TableDataset(
+                MySqlIConnectionFactory::getInstance(),
+                GetConnectionOptions(),
+                '`brg`');
+            $lookupDataset->addFields(
+                array(
+                    new IntegerField('id', true, true),
+                    new IntegerField('idgol', true),
+                    new StringField('kode', true),
+                    new StringField('nama'),
+                    new StringField('merk'),
+                    new StringField('golongan'),
+                    new StringField('kelompok'),
+                    new StringField('jenis'),
+                    new IntegerField('aktif'),
+                    new IntegerField('defsatuan'),
+                    new IntegerField('defgalery')
+                )
+            );
+            $lookupDataset->setOrderByField('idgol', 'ASC');
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_id_idgol_search', 'id', 'idgol', null, 20);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $lookupDataset = new TableDataset(
+                MySqlIConnectionFactory::getInstance(),
+                GetConnectionOptions(),
+                '`brg`');
+            $lookupDataset->addFields(
+                array(
+                    new IntegerField('id', true, true),
+                    new IntegerField('idgol', true),
+                    new StringField('kode', true),
+                    new StringField('nama'),
+                    new StringField('merk'),
+                    new StringField('golongan'),
+                    new StringField('kelompok'),
+                    new StringField('jenis'),
+                    new IntegerField('aktif'),
+                    new IntegerField('defsatuan'),
+                    new IntegerField('defgalery')
+                )
+            );
+            $lookupDataset->setOrderByField('idgol', 'ASC');
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_id_idgol_search', 'id', 'idgol', null, 20);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $lookupDataset = new TableDataset(
+                MySqlIConnectionFactory::getInstance(),
+                GetConnectionOptions(),
+                '`brg`');
+            $lookupDataset->addFields(
+                array(
+                    new IntegerField('id', true, true),
+                    new IntegerField('idgol', true),
+                    new StringField('kode', true),
+                    new StringField('nama'),
+                    new StringField('merk'),
+                    new StringField('golongan'),
+                    new StringField('kelompok'),
+                    new StringField('jenis'),
+                    new IntegerField('aktif'),
+                    new IntegerField('defsatuan'),
+                    new IntegerField('defgalery')
+                )
+            );
+            $lookupDataset->setOrderByField('idgol', 'ASC');
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_id_idgol_search', 'id', 'idgol', null, 20);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for deskripsi field
+            //
+            $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brginfo_deskripsi_handler_view', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $handler = new DownloadHTTPHandler($this->dataset, 'gambar', 'gambar_handler', '', '', true);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for supplier field
+            //
+            $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'DetailGridbrg.brginfo_supplier_handler_view', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $lookupDataset = new TableDataset(
+                MySqlIConnectionFactory::getInstance(),
+                GetConnectionOptions(),
+                '`brg`');
+            $lookupDataset->addFields(
+                array(
+                    new IntegerField('id', true, true),
+                    new IntegerField('idgol', true),
+                    new StringField('kode', true),
+                    new StringField('nama'),
+                    new StringField('merk'),
+                    new StringField('golongan'),
+                    new StringField('kelompok'),
+                    new StringField('jenis'),
+                    new IntegerField('aktif'),
+                    new IntegerField('defsatuan'),
+                    new IntegerField('defgalery')
+                )
+            );
+            $lookupDataset->setOrderByField('idgol', 'ASC');
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_id_idgol_search', 'id', 'idgol', null, 20);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'DetailGridbrg.brginfo_gambar_handler_edit', new NullFilter());
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'DetailGridbrg.brginfo_gambar_handler_multi_edit', new NullFilter());
             GetApplication()->RegisterHTTPHandler($handler);
         }
        
@@ -3030,7 +3165,7 @@
     
         }
     
-        protected function doCustomDefaultValues(&$values, &$handled) 
+        public function doCustomDefaultValues(&$values, &$handled) 
         {
     
         }
@@ -3105,11 +3240,6 @@
     
         }
     
-        protected function doGetSelectionFilters(FixedKeysArray $columns, &$result)
-        {
-    
-        }
-    
         protected function doGetCustomFormLayout($mode, FixedKeysArray $columns, FormLayout $layout)
         {
     
@@ -3130,12 +3260,12 @@
     
         }
     
-        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
+        protected function doGetCustomPagePermissions(Page $page, PermissionSet &$permissions, &$handled)
         {
     
         }
     
-        protected function doAddEnvironmentVariables(Page $page, &$variables)
+        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
         {
     
         }
@@ -3153,11 +3283,6 @@
     {
         protected function DoBeforeCreate()
         {
-            $this->SetTitle('Brgsatuan');
-            $this->SetMenuLabel('Brgsatuan');
-            $this->SetHeader(GetPagesHeader());
-            $this->SetFooter(GetPagesFooter());
-    
             $this->dataset = new TableDataset(
                 MySqlIConnectionFactory::getInstance(),
                 GetConnectionOptions(),
@@ -3273,10 +3398,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_brgsatuan_id_search');
+            $main_editor->SetHandlerName('filter_builder_id_idgol_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('id', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_brgsatuan_id_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_id_idgol_search');
             
             $filterBuilder->addColumn(
                 $columns['id'],
@@ -3300,10 +3425,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_brgsatuan_idsatuan_search');
+            $main_editor->SetHandlerName('filter_builder_idsatuan_satuan_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idsatuan', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_brgsatuan_idsatuan_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idsatuan_satuan_search');
             
             $text_editor = new TextEdit('idsatuan');
             
@@ -4104,7 +4229,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_idgol', 'edit_brg_brgsatuan_id_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_idgol', 'edit_id_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -4127,7 +4252,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'edit_brg_brgsatuan_idsatuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
+            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'edit_idsatuan_satuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -4487,7 +4612,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_idgol', 'insert_brg_brgsatuan_id_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_idgol', 'insert_id_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -4510,7 +4635,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'insert_brg_brgsatuan_idsatuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
+            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'insert_idsatuan_satuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -5336,7 +5461,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_brgsatuan_id_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_id_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -5350,7 +5475,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_brgsatuan_idsatuan_search', 'id', 'satuan', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idsatuan_satuan_search', 'id', 'satuan', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -5373,7 +5498,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_brgsatuan_id_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_id_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -5387,7 +5512,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_brgsatuan_idsatuan_search', 'id', 'satuan', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idsatuan_satuan_search', 'id', 'satuan', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -5410,7 +5535,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_brgsatuan_id_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_id_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -5424,7 +5549,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_brgsatuan_idsatuan_search', 'id', 'satuan', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idsatuan_satuan_search', 'id', 'satuan', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
         }
        
@@ -5458,7 +5583,7 @@
     
         }
     
-        protected function doCustomDefaultValues(&$values, &$handled) 
+        public function doCustomDefaultValues(&$values, &$handled) 
         {
     
         }
@@ -5533,11 +5658,6 @@
     
         }
     
-        protected function doGetSelectionFilters(FixedKeysArray $columns, &$result)
-        {
-    
-        }
-    
         protected function doGetCustomFormLayout($mode, FixedKeysArray $columns, FormLayout $layout)
         {
     
@@ -5558,12 +5678,12 @@
     
         }
     
-        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
+        protected function doGetCustomPagePermissions(Page $page, PermissionSet &$permissions, &$handled)
         {
     
         }
     
-        protected function doAddEnvironmentVariables(Page $page, &$variables)
+        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
         {
     
         }
@@ -5581,11 +5701,6 @@
     {
         protected function DoBeforeCreate()
         {
-            $this->SetTitle('Fifo');
-            $this->SetMenuLabel('Fifo');
-            $this->SetHeader(GetPagesHeader());
-            $this->SetFooter(GetPagesFooter());
-    
             $this->dataset = new TableDataset(
                 MySqlIConnectionFactory::getInstance(),
                 GetConnectionOptions(),
@@ -5671,10 +5786,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_fifo_idmasuk_search');
+            $main_editor->SetHandlerName('filter_builder_idmasuk_notrans_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idmasuk', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_fifo_idmasuk_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idmasuk_notrans_search');
             
             $text_editor = new TextEdit('idmasuk');
             
@@ -5724,10 +5839,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_fifo_idbarang_search');
+            $main_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idbarang', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_fifo_idbarang_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $filterBuilder->addColumn(
                 $columns['idbarang'],
@@ -6097,7 +6212,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idmasuk', 'idmasuk', 'idmasuk_notrans', 'edit_brg_fifo_idmasuk_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Idmasuk', 'idmasuk', 'idmasuk_notrans', 'edit_idmasuk_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -6139,7 +6254,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_brg_fifo_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -6234,7 +6349,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'multi_edit_brg_fifo_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'multi_edit_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -6324,7 +6439,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idmasuk', 'idmasuk', 'idmasuk_notrans', 'insert_brg_fifo_idmasuk_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Idmasuk', 'idmasuk', 'idmasuk_notrans', 'insert_idmasuk_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -6366,7 +6481,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_brg_fifo_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -6786,7 +6901,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_fifo_idmasuk_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idmasuk_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -6809,7 +6924,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_fifo_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -6837,7 +6952,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_fifo_idmasuk_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idmasuk_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -6860,7 +6975,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_fifo_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -6888,7 +7003,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_fifo_idmasuk_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idmasuk_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -6911,7 +7026,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_fifo_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -6934,7 +7049,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_fifo_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
         }
        
@@ -6968,7 +7083,7 @@
     
         }
     
-        protected function doCustomDefaultValues(&$values, &$handled) 
+        public function doCustomDefaultValues(&$values, &$handled) 
         {
     
         }
@@ -7043,11 +7158,6 @@
     
         }
     
-        protected function doGetSelectionFilters(FixedKeysArray $columns, &$result)
-        {
-    
-        }
-    
         protected function doGetCustomFormLayout($mode, FixedKeysArray $columns, FormLayout $layout)
         {
     
@@ -7068,12 +7178,12 @@
     
         }
     
-        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
+        protected function doGetCustomPagePermissions(Page $page, PermissionSet &$permissions, &$handled)
         {
     
         }
     
-        protected function doAddEnvironmentVariables(Page $page, &$variables)
+        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
         {
     
         }
@@ -7091,11 +7201,6 @@
     {
         protected function DoBeforeCreate()
         {
-            $this->SetTitle('Stok');
-            $this->SetMenuLabel('Stok');
-            $this->SetHeader(GetPagesHeader());
-            $this->SetFooter(GetPagesFooter());
-    
             $this->dataset = new TableDataset(
                 MySqlIConnectionFactory::getInstance(),
                 GetConnectionOptions(),
@@ -7166,10 +7271,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_stok_idlokasi_search');
+            $main_editor->SetHandlerName('filter_builder_idlokasi_kode_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idlokasi', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_stok_idlokasi_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idlokasi_kode_search');
             
             $text_editor = new TextEdit('idlokasi');
             
@@ -7201,10 +7306,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_stok_idbarang_search');
+            $main_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idbarang', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_stok_idbarang_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $filterBuilder->addColumn(
                 $columns['idbarang'],
@@ -7380,7 +7485,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idlokasi', 'idlokasi', 'idlokasi_kode', 'edit_brg_stok_idlokasi_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
+            $editColumn = new DynamicLookupEditColumn('Idlokasi', 'idlokasi', 'idlokasi_kode', 'edit_idlokasi_kode_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -7412,7 +7517,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_brg_stok_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -7468,7 +7573,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idlokasi', 'idlokasi', 'idlokasi_kode', 'insert_brg_stok_idlokasi_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
+            $editColumn = new DynamicLookupEditColumn('Idlokasi', 'idlokasi', 'idlokasi_kode', 'insert_idlokasi_kode_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -7500,7 +7605,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_brg_stok_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -7723,7 +7828,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_stok_idlokasi_search', 'id', 'kode', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idlokasi_kode_search', 'id', 'kode', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -7746,7 +7851,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_stok_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -7767,7 +7872,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_stok_idlokasi_search', 'id', 'kode', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idlokasi_kode_search', 'id', 'kode', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -7790,7 +7895,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_stok_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -7811,7 +7916,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_stok_idlokasi_search', 'id', 'kode', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idlokasi_kode_search', 'id', 'kode', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -7834,7 +7939,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_stok_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
         }
        
@@ -7868,7 +7973,7 @@
     
         }
     
-        protected function doCustomDefaultValues(&$values, &$handled) 
+        public function doCustomDefaultValues(&$values, &$handled) 
         {
     
         }
@@ -7943,11 +8048,6 @@
     
         }
     
-        protected function doGetSelectionFilters(FixedKeysArray $columns, &$result)
-        {
-    
-        }
-    
         protected function doGetCustomFormLayout($mode, FixedKeysArray $columns, FormLayout $layout)
         {
     
@@ -7968,12 +8068,12 @@
     
         }
     
-        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
+        protected function doGetCustomPagePermissions(Page $page, PermissionSet &$permissions, &$handled)
         {
     
         }
     
-        protected function doAddEnvironmentVariables(Page $page, &$variables)
+        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
         {
     
         }
@@ -7991,11 +8091,6 @@
     {
         protected function DoBeforeCreate()
         {
-            $this->SetTitle('Trd');
-            $this->SetMenuLabel('Trd');
-            $this->SetHeader(GetPagesHeader());
-            $this->SetFooter(GetPagesFooter());
-    
             $this->dataset = new TableDataset(
                 MySqlIConnectionFactory::getInstance(),
                 GetConnectionOptions(),
@@ -8136,10 +8231,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trd_notrans_search');
+            $main_editor->SetHandlerName('filter_builder_notrans_id_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('notrans', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trd_notrans_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_notrans_id_search');
             
             $filterBuilder->addColumn(
                 $columns['notrans'],
@@ -8163,10 +8258,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trd_idtrans_search');
+            $main_editor->SetHandlerName('filter_builder_idtrans_notrans_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idtrans', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trd_idtrans_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idtrans_notrans_search');
             
             $text_editor = new TextEdit('idtrans');
             
@@ -8198,10 +8293,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trd_idbarang_search');
+            $main_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idbarang', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trd_idbarang_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $filterBuilder->addColumn(
                 $columns['idbarang'],
@@ -8250,10 +8345,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trd_kode_search');
+            $main_editor->SetHandlerName('filter_builder_kode_id_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('kode', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trd_kode_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_kode_id_search');
             
             $filterBuilder->addColumn(
                 $columns['kode'],
@@ -8295,10 +8390,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trd_idsatuan_search');
+            $main_editor->SetHandlerName('filter_builder_idsatuan_satuan_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idsatuan', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trd_idsatuan_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idsatuan_satuan_search');
             
             $text_editor = new TextEdit('idsatuan');
             
@@ -8907,7 +9002,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'edit_brg_trd_notrans_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'edit_notrans_id_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -8942,7 +9037,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'edit_brg_trd_idtrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'edit_idtrans_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -8974,7 +9069,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_brg_trd_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9017,7 +9112,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'edit_brg_trd_kode_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'edit_kode_id_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9050,7 +9145,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'edit_brg_trd_idsatuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
+            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'edit_idsatuan_satuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9170,7 +9265,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'multi_edit_brg_trd_notrans_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'multi_edit_notrans_id_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9205,7 +9300,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'multi_edit_brg_trd_idtrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'multi_edit_idtrans_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9237,7 +9332,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'multi_edit_brg_trd_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'multi_edit_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9280,7 +9375,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'multi_edit_brg_trd_kode_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'multi_edit_kode_id_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9313,7 +9408,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'multi_edit_brg_trd_idsatuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
+            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'multi_edit_idsatuan_satuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9444,7 +9539,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'insert_brg_trd_notrans_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'insert_notrans_id_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9479,7 +9574,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'insert_brg_trd_idtrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'insert_idtrans_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9511,7 +9606,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_brg_trd_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9554,7 +9649,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'insert_brg_trd_kode_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'insert_kode_id_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -9587,7 +9682,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'insert_brg_trd_idsatuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
+            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'insert_idsatuan_satuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -10232,7 +10327,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trd_notrans_search', 'notrans', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_notrans_id_search', 'notrans', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10258,7 +10353,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trd_idtrans_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idtrans_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10281,7 +10376,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trd_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10304,7 +10399,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trd_kode_search', 'kode', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_kode_id_search', 'kode', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10318,7 +10413,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trd_idsatuan_search', 'id', 'satuan', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idsatuan_satuan_search', 'id', 'satuan', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10344,7 +10439,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trd_notrans_search', 'notrans', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_notrans_id_search', 'notrans', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10370,7 +10465,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trd_idtrans_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idtrans_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10393,7 +10488,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trd_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10416,7 +10511,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trd_kode_search', 'kode', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_kode_id_search', 'kode', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10430,7 +10525,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trd_idsatuan_search', 'id', 'satuan', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idsatuan_satuan_search', 'id', 'satuan', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10456,7 +10551,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trd_notrans_search', 'notrans', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_notrans_id_search', 'notrans', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10482,7 +10577,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trd_idtrans_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idtrans_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10505,7 +10600,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trd_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10528,7 +10623,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trd_kode_search', 'kode', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_kode_id_search', 'kode', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10542,7 +10637,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trd_idsatuan_search', 'id', 'satuan', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idsatuan_satuan_search', 'id', 'satuan', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10568,7 +10663,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trd_notrans_search', 'notrans', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_notrans_id_search', 'notrans', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10594,7 +10689,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trd_idtrans_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idtrans_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10617,7 +10712,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trd_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10640,7 +10735,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trd_kode_search', 'kode', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_kode_id_search', 'kode', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -10654,7 +10749,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trd_idsatuan_search', 'id', 'satuan', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idsatuan_satuan_search', 'id', 'satuan', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
         }
        
@@ -10688,7 +10783,7 @@
     
         }
     
-        protected function doCustomDefaultValues(&$values, &$handled) 
+        public function doCustomDefaultValues(&$values, &$handled) 
         {
     
         }
@@ -10763,11 +10858,6 @@
     
         }
     
-        protected function doGetSelectionFilters(FixedKeysArray $columns, &$result)
-        {
-    
-        }
-    
         protected function doGetCustomFormLayout($mode, FixedKeysArray $columns, FormLayout $layout)
         {
     
@@ -10788,12 +10878,12 @@
     
         }
     
-        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
+        protected function doGetCustomPagePermissions(Page $page, PermissionSet &$permissions, &$handled)
         {
     
         }
     
-        protected function doAddEnvironmentVariables(Page $page, &$variables)
+        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
         {
     
         }
@@ -10811,11 +10901,6 @@
     {
         protected function DoBeforeCreate()
         {
-            $this->SetTitle('Trd');
-            $this->SetMenuLabel('Trd');
-            $this->SetHeader(GetPagesHeader());
-            $this->SetFooter(GetPagesFooter());
-    
             $this->dataset = new TableDataset(
                 MySqlIConnectionFactory::getInstance(),
                 GetConnectionOptions(),
@@ -10956,10 +11041,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trd01_notrans_search');
+            $main_editor->SetHandlerName('filter_builder_notrans_id_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('notrans', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trd01_notrans_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_notrans_id_search');
             
             $filterBuilder->addColumn(
                 $columns['notrans'],
@@ -10983,10 +11068,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trd01_idtrans_search');
+            $main_editor->SetHandlerName('filter_builder_idtrans_notrans_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idtrans', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trd01_idtrans_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idtrans_notrans_search');
             
             $text_editor = new TextEdit('idtrans');
             
@@ -11018,10 +11103,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trd01_idbarang_search');
+            $main_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idbarang', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trd01_idbarang_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $filterBuilder->addColumn(
                 $columns['idbarang'],
@@ -11070,10 +11155,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trd01_kode_search');
+            $main_editor->SetHandlerName('filter_builder_kode_id_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('kode', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trd01_kode_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_kode_id_search');
             
             $filterBuilder->addColumn(
                 $columns['kode'],
@@ -11115,10 +11200,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trd01_idsatuan_search');
+            $main_editor->SetHandlerName('filter_builder_idsatuan_satuan_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idsatuan', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trd01_idsatuan_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idsatuan_satuan_search');
             
             $text_editor = new TextEdit('idsatuan');
             
@@ -11727,7 +11812,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'edit_brg_trd01_notrans_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'edit_notrans_id_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -11762,7 +11847,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'edit_brg_trd01_idtrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'edit_idtrans_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -11794,7 +11879,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_brg_trd01_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -11837,7 +11922,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'edit_brg_trd01_kode_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'edit_kode_id_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -11870,7 +11955,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'edit_brg_trd01_idsatuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
+            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'edit_idsatuan_satuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -11990,7 +12075,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'multi_edit_brg_trd01_notrans_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'multi_edit_notrans_id_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -12025,7 +12110,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'multi_edit_brg_trd01_idtrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'multi_edit_idtrans_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -12057,7 +12142,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'multi_edit_brg_trd01_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'multi_edit_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -12100,7 +12185,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'multi_edit_brg_trd01_kode_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'multi_edit_kode_id_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -12133,7 +12218,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'multi_edit_brg_trd01_idsatuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
+            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'multi_edit_idsatuan_satuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -12264,7 +12349,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'insert_brg_trd01_notrans_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Notrans', 'notrans', 'notrans_id', 'insert_notrans_id_search', $editor, $this->dataset, $lookupDataset, 'notrans', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -12299,7 +12384,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'insert_brg_trd01_idtrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Idtrans', 'idtrans', 'idtrans_notrans', 'insert_idtrans_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -12331,7 +12416,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_brg_trd01_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -12374,7 +12459,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'insert_brg_trd01_kode_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
+            $editColumn = new DynamicLookupEditColumn('Kode', 'kode', 'kode_id', 'insert_kode_id_search', $editor, $this->dataset, $lookupDataset, 'kode', 'id', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -12407,7 +12492,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'insert_brg_trd01_idsatuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
+            $editColumn = new DynamicLookupEditColumn('Idsatuan', 'idsatuan', 'idsatuan_satuan', 'insert_idsatuan_satuan_search', $editor, $this->dataset, $lookupDataset, 'id', 'satuan', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -13052,7 +13137,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trd01_notrans_search', 'notrans', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_notrans_id_search', 'notrans', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13078,7 +13163,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trd01_idtrans_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idtrans_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13101,7 +13186,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trd01_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13124,7 +13209,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trd01_kode_search', 'kode', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_kode_id_search', 'kode', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13138,7 +13223,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trd01_idsatuan_search', 'id', 'satuan', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idsatuan_satuan_search', 'id', 'satuan', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13164,7 +13249,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trd01_notrans_search', 'notrans', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_notrans_id_search', 'notrans', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13190,7 +13275,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trd01_idtrans_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idtrans_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13213,7 +13298,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trd01_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13236,7 +13321,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trd01_kode_search', 'kode', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_kode_id_search', 'kode', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13250,7 +13335,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trd01_idsatuan_search', 'id', 'satuan', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idsatuan_satuan_search', 'id', 'satuan', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13276,7 +13361,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trd01_notrans_search', 'notrans', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_notrans_id_search', 'notrans', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13302,7 +13387,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trd01_idtrans_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idtrans_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13325,7 +13410,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trd01_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13348,7 +13433,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trd01_kode_search', 'kode', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_kode_id_search', 'kode', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13362,7 +13447,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trd01_idsatuan_search', 'id', 'satuan', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idsatuan_satuan_search', 'id', 'satuan', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13388,7 +13473,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trd01_notrans_search', 'notrans', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_notrans_id_search', 'notrans', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13414,7 +13499,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trd01_idtrans_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idtrans_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13437,7 +13522,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trd01_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13460,7 +13545,7 @@
                 )
             );
             $lookupDataset->setOrderByField('id', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trd01_kode_search', 'kode', 'id', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_kode_id_search', 'kode', 'id', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -13474,7 +13559,7 @@
                 )
             );
             $lookupDataset->setOrderByField('satuan', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trd01_idsatuan_search', 'id', 'satuan', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idsatuan_satuan_search', 'id', 'satuan', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
         }
        
@@ -13508,7 +13593,7 @@
     
         }
     
-        protected function doCustomDefaultValues(&$values, &$handled) 
+        public function doCustomDefaultValues(&$values, &$handled) 
         {
     
         }
@@ -13583,11 +13668,6 @@
     
         }
     
-        protected function doGetSelectionFilters(FixedKeysArray $columns, &$result)
-        {
-    
-        }
-    
         protected function doGetCustomFormLayout($mode, FixedKeysArray $columns, FormLayout $layout)
         {
     
@@ -13608,12 +13688,12 @@
     
         }
     
-        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
+        protected function doGetCustomPagePermissions(Page $page, PermissionSet &$permissions, &$handled)
         {
     
         }
     
-        protected function doAddEnvironmentVariables(Page $page, &$variables)
+        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
         {
     
         }
@@ -13631,11 +13711,6 @@
     {
         protected function DoBeforeCreate()
         {
-            $this->SetTitle('Trdmutasi');
-            $this->SetMenuLabel('Trdmutasi');
-            $this->SetHeader(GetPagesHeader());
-            $this->SetFooter(GetPagesFooter());
-    
             $this->dataset = new TableDataset(
                 MySqlIConnectionFactory::getInstance(),
                 GetConnectionOptions(),
@@ -13760,10 +13835,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trdmutasi_id_search');
+            $main_editor->SetHandlerName('filter_builder_id_notrans_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('id', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trdmutasi_id_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_id_notrans_search');
             
             $text_editor = new TextEdit('id');
             
@@ -13795,10 +13870,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trdmutasi_refid_search');
+            $main_editor->SetHandlerName('filter_builder_refid_notrans_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('refid', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trdmutasi_refid_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_refid_notrans_search');
             
             $text_editor = new TextEdit('refid');
             
@@ -13830,10 +13905,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trdmutasi_idbarang_search');
+            $main_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idbarang', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trdmutasi_idbarang_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idbarang_idgol_search');
             
             $filterBuilder->addColumn(
                 $columns['idbarang'],
@@ -14091,10 +14166,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trdmutasi_idlokasi_search');
+            $main_editor->SetHandlerName('filter_builder_idlokasi_kode_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idlokasi', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trdmutasi_idlokasi_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idlokasi_kode_search');
             
             $text_editor = new TextEdit('idlokasi');
             
@@ -14126,10 +14201,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_trdmutasi_idlokasi2_search');
+            $main_editor->SetHandlerName('filter_builder_idlokasi2_kode_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idlokasi2', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_trdmutasi_idlokasi2_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idlokasi2_kode_search');
             
             $text_editor = new TextEdit('idlokasi2');
             
@@ -14670,7 +14745,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_notrans', 'edit_brg_trdmutasi_id_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_notrans', 'edit_id_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -14707,7 +14782,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Refid', 'refid', 'refid_notrans', 'edit_brg_trdmutasi_refid_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Refid', 'refid', 'refid_notrans', 'edit_refid_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -14739,7 +14814,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_brg_trdmutasi_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'edit_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -14899,7 +14974,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idlokasi', 'idlokasi', 'idlokasi_kode', 'edit_brg_trdmutasi_idlokasi_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
+            $editColumn = new DynamicLookupEditColumn('Idlokasi', 'idlokasi', 'idlokasi_kode', 'edit_idlokasi_kode_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -14929,7 +15004,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idlokasi2', 'idlokasi2', 'idlokasi2_kode', 'edit_brg_trdmutasi_idlokasi2_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
+            $editColumn = new DynamicLookupEditColumn('Idlokasi2', 'idlokasi2', 'idlokasi2_kode', 'edit_idlokasi2_kode_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -14979,7 +15054,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Refid', 'refid', 'refid_notrans', 'multi_edit_brg_trdmutasi_refid_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Refid', 'refid', 'refid_notrans', 'multi_edit_refid_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -15011,7 +15086,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'multi_edit_brg_trdmutasi_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'multi_edit_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -15171,7 +15246,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idlokasi', 'idlokasi', 'idlokasi_kode', 'multi_edit_brg_trdmutasi_idlokasi_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
+            $editColumn = new DynamicLookupEditColumn('Idlokasi', 'idlokasi', 'idlokasi_kode', 'multi_edit_idlokasi_kode_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -15201,7 +15276,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idlokasi2', 'idlokasi2', 'idlokasi2_kode', 'multi_edit_brg_trdmutasi_idlokasi2_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
+            $editColumn = new DynamicLookupEditColumn('Idlokasi2', 'idlokasi2', 'idlokasi2_kode', 'multi_edit_idlokasi2_kode_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -15251,7 +15326,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_notrans', 'insert_brg_trdmutasi_id_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Id', 'id', 'id_notrans', 'insert_id_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -15288,7 +15363,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Refid', 'refid', 'refid_notrans', 'insert_brg_trdmutasi_refid_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
+            $editColumn = new DynamicLookupEditColumn('Refid', 'refid', 'refid_notrans', 'insert_refid_notrans_search', $editor, $this->dataset, $lookupDataset, 'id', 'notrans', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -15320,7 +15395,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_brg_trdmutasi_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
+            $editColumn = new DynamicLookupEditColumn('Idbarang', 'idbarang', 'idbarang_idgol', 'insert_idbarang_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'idgol', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -15480,7 +15555,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idlokasi', 'idlokasi', 'idlokasi_kode', 'insert_brg_trdmutasi_idlokasi_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
+            $editColumn = new DynamicLookupEditColumn('Idlokasi', 'idlokasi', 'idlokasi_kode', 'insert_idlokasi_kode_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -15510,7 +15585,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idlokasi2', 'idlokasi2', 'idlokasi2_kode', 'insert_brg_trdmutasi_idlokasi2_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
+            $editColumn = new DynamicLookupEditColumn('Idlokasi2', 'idlokasi2', 'idlokasi2_kode', 'insert_idlokasi2_kode_search', $editor, $this->dataset, $lookupDataset, 'id', 'kode', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -16193,7 +16268,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trdmutasi_id_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_id_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16221,7 +16296,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trdmutasi_refid_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_refid_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16244,7 +16319,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trdmutasi_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16265,7 +16340,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trdmutasi_idlokasi_search', 'id', 'kode', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idlokasi_kode_search', 'id', 'kode', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16286,7 +16361,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_trdmutasi_idlokasi2_search', 'id', 'kode', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idlokasi2_kode_search', 'id', 'kode', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16314,7 +16389,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trdmutasi_id_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_id_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16342,7 +16417,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trdmutasi_refid_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_refid_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16365,7 +16440,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trdmutasi_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16386,7 +16461,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trdmutasi_idlokasi_search', 'id', 'kode', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idlokasi_kode_search', 'id', 'kode', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16407,7 +16482,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_trdmutasi_idlokasi2_search', 'id', 'kode', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idlokasi2_kode_search', 'id', 'kode', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16435,7 +16510,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trdmutasi_id_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_id_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16463,7 +16538,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trdmutasi_refid_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_refid_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16486,7 +16561,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trdmutasi_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16507,7 +16582,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trdmutasi_idlokasi_search', 'id', 'kode', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idlokasi_kode_search', 'id', 'kode', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16528,7 +16603,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_trdmutasi_idlokasi2_search', 'id', 'kode', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idlokasi2_kode_search', 'id', 'kode', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16556,7 +16631,7 @@
                 )
             );
             $lookupDataset->setOrderByField('notrans', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trdmutasi_refid_search', 'id', 'notrans', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_refid_notrans_search', 'id', 'notrans', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16579,7 +16654,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idgol', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trdmutasi_idbarang_search', 'id', 'idgol', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idbarang_idgol_search', 'id', 'idgol', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16600,7 +16675,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trdmutasi_idlokasi_search', 'id', 'kode', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idlokasi_kode_search', 'id', 'kode', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -16621,7 +16696,7 @@
                 )
             );
             $lookupDataset->setOrderByField('kode', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_trdmutasi_idlokasi2_search', 'id', 'kode', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idlokasi2_kode_search', 'id', 'kode', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
         }
        
@@ -16655,7 +16730,7 @@
     
         }
     
-        protected function doCustomDefaultValues(&$values, &$handled) 
+        public function doCustomDefaultValues(&$values, &$handled) 
         {
     
         }
@@ -16730,11 +16805,6 @@
     
         }
     
-        protected function doGetSelectionFilters(FixedKeysArray $columns, &$result)
-        {
-    
-        }
-    
         protected function doGetCustomFormLayout($mode, FixedKeysArray $columns, FormLayout $layout)
         {
     
@@ -16755,12 +16825,12 @@
     
         }
     
-        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
+        protected function doGetCustomPagePermissions(Page $page, PermissionSet &$permissions, &$handled)
         {
     
         }
     
-        protected function doAddEnvironmentVariables(Page $page, &$variables)
+        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
         {
     
         }
@@ -16775,11 +16845,6 @@
     {
         protected function DoBeforeCreate()
         {
-            $this->SetTitle('Brg');
-            $this->SetMenuLabel('Brg');
-            $this->SetHeader(GetPagesHeader());
-            $this->SetFooter(GetPagesFooter());
-    
             $this->dataset = new TableDataset(
                 MySqlIConnectionFactory::getInstance(),
                 GetConnectionOptions(),
@@ -16892,10 +16957,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_idgol_search');
+            $main_editor->SetHandlerName('filter_builder_idgol_nama_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('idgol', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_idgol_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_idgol_nama_search');
             
             $text_editor = new TextEdit('idgol');
             
@@ -17113,10 +17178,10 @@
             $main_editor->setAllowClear(true);
             $main_editor->setMinimumInputLength(0);
             $main_editor->SetAllowNullValue(false);
-            $main_editor->SetHandlerName('filter_builder_brg_defgalery_search');
+            $main_editor->SetHandlerName('filter_builder_defgalery_idbarang_search');
             
             $multi_value_select_editor = new RemoteMultiValueSelect('defgalery', $this->CreateLinkBuilder());
-            $multi_value_select_editor->SetHandlerName('filter_builder_brg_defgalery_search');
+            $multi_value_select_editor->SetHandlerName('filter_builder_defgalery_idbarang_search');
             
             $filterBuilder->addColumn(
                 $columns['defgalery'],
@@ -17181,7 +17246,7 @@
     
         protected function AddFieldColumns(Grid $grid, $withDetails = true)
         {
-            if (GetCurrentUserPermissionsForPage('brg.brggaleri')->HasViewGrant() && $withDetails)
+            if (GetCurrentUserPermissionSetForDataSource('brg.brggaleri')->HasViewGrant() && $withDetails)
             {
             //
             // View column for brg_brggaleri detail
@@ -17191,7 +17256,7 @@
             $grid->AddViewColumn($column);
             }
             
-            if (GetCurrentUserPermissionsForPage('brg.brginfo')->HasViewGrant() && $withDetails)
+            if (GetCurrentUserPermissionSetForDataSource('brg.brginfo')->HasViewGrant() && $withDetails)
             {
             //
             // View column for brg_brginfo detail
@@ -17201,7 +17266,7 @@
             $grid->AddViewColumn($column);
             }
             
-            if (GetCurrentUserPermissionsForPage('brg.brgsatuan')->HasViewGrant() && $withDetails)
+            if (GetCurrentUserPermissionSetForDataSource('brg.brgsatuan')->HasViewGrant() && $withDetails)
             {
             //
             // View column for brg_brgsatuan detail
@@ -17211,7 +17276,7 @@
             $grid->AddViewColumn($column);
             }
             
-            if (GetCurrentUserPermissionsForPage('brg.fifo')->HasViewGrant() && $withDetails)
+            if (GetCurrentUserPermissionSetForDataSource('brg.fifo')->HasViewGrant() && $withDetails)
             {
             //
             // View column for brg_fifo detail
@@ -17221,7 +17286,7 @@
             $grid->AddViewColumn($column);
             }
             
-            if (GetCurrentUserPermissionsForPage('brg.stok')->HasViewGrant() && $withDetails)
+            if (GetCurrentUserPermissionSetForDataSource('brg.stok')->HasViewGrant() && $withDetails)
             {
             //
             // View column for brg_stok detail
@@ -17231,7 +17296,7 @@
             $grid->AddViewColumn($column);
             }
             
-            if (GetCurrentUserPermissionsForPage('brg.trd')->HasViewGrant() && $withDetails)
+            if (GetCurrentUserPermissionSetForDataSource('brg.trd')->HasViewGrant() && $withDetails)
             {
             //
             // View column for brg_trd detail
@@ -17241,7 +17306,7 @@
             $grid->AddViewColumn($column);
             }
             
-            if (GetCurrentUserPermissionsForPage('brg.trd01')->HasViewGrant() && $withDetails)
+            if (GetCurrentUserPermissionSetForDataSource('brg.trd01')->HasViewGrant() && $withDetails)
             {
             //
             // View column for brg_trd01 detail
@@ -17251,7 +17316,7 @@
             $grid->AddViewColumn($column);
             }
             
-            if (GetCurrentUserPermissionsForPage('brg.trdmutasi')->HasViewGrant() && $withDetails)
+            if (GetCurrentUserPermissionSetForDataSource('brg.trdmutasi')->HasViewGrant() && $withDetails)
             {
             //
             // View column for brg_trdmutasi detail
@@ -17511,7 +17576,7 @@
                 )
             );
             $lookupDataset->setOrderByField('nama', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idgol', 'idgol', 'idgol_nama', 'edit_brg_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'nama', '');
+            $editColumn = new DynamicLookupEditColumn('Idgol', 'idgol', 'idgol_nama', 'edit_idgol_nama_search', $editor, $this->dataset, $lookupDataset, 'id', 'nama', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -17625,7 +17690,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idbarang', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Defgalery', 'defgalery', 'defgalery_idbarang', 'edit_brg_defgalery_search', $editor, $this->dataset, $lookupDataset, 'id', 'idbarang', '');
+            $editColumn = new DynamicLookupEditColumn('Defgalery', 'defgalery', 'defgalery_idbarang', 'edit_defgalery_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idbarang', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -17657,7 +17722,7 @@
                 )
             );
             $lookupDataset->setOrderByField('nama', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idgol', 'idgol', 'idgol_nama', 'multi_edit_brg_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'nama', '');
+            $editColumn = new DynamicLookupEditColumn('Idgol', 'idgol', 'idgol_nama', 'multi_edit_idgol_nama_search', $editor, $this->dataset, $lookupDataset, 'id', 'nama', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -17760,7 +17825,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idbarang', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Defgalery', 'defgalery', 'defgalery_idbarang', 'multi_edit_brg_defgalery_search', $editor, $this->dataset, $lookupDataset, 'id', 'idbarang', '');
+            $editColumn = new DynamicLookupEditColumn('Defgalery', 'defgalery', 'defgalery_idbarang', 'multi_edit_defgalery_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idbarang', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -17802,7 +17867,7 @@
                 )
             );
             $lookupDataset->setOrderByField('nama', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Idgol', 'idgol', 'idgol_nama', 'insert_brg_idgol_search', $editor, $this->dataset, $lookupDataset, 'id', 'nama', '');
+            $editColumn = new DynamicLookupEditColumn('Idgol', 'idgol', 'idgol_nama', 'insert_idgol_nama_search', $editor, $this->dataset, $lookupDataset, 'id', 'nama', '');
             $validator = new RequiredValidator(StringUtils::Format($this->GetLocalizerCaptions()->GetMessageString('RequiredValidationMessage'), $editColumn->GetCaption()));
             $editor->GetValidatorCollection()->AddValidator($validator);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -17916,7 +17981,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idbarang', 'ASC');
-            $editColumn = new DynamicLookupEditColumn('Defgalery', 'defgalery', 'defgalery_idbarang', 'insert_brg_defgalery_search', $editor, $this->dataset, $lookupDataset, 'id', 'idbarang', '');
+            $editColumn = new DynamicLookupEditColumn('Defgalery', 'defgalery', 'defgalery_idbarang', 'insert_defgalery_idbarang_search', $editor, $this->dataset, $lookupDataset, 'id', 'idbarang', '');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -18233,7 +18298,6 @@
             
             $this->AddFieldColumns($result, false);
             $this->AddPrintColumns($result);
-            $this->AddExportColumns($result);
             
             $result->SetAllowDeleteSelected(false);
             $result->SetShowUpdateLink(false);
@@ -18319,50 +18383,82 @@
         }
     
         protected function doRegisterHandlers() {
-            $detailPage = new brg_brggaleriPage('brg_brggaleri', $this, array('idbarang'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionsForPage('brg.brggaleri'), 'UTF-8');
+            $detailPage = new brg_brggaleriPage('brg_brggaleri', $this, array('idbarang'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionSetForDataSource('brg.brggaleri'), 'UTF-8');
             $detailPage->SetRecordPermission(GetCurrentUserRecordPermissionsForDataSource('brg.brggaleri'));
+            $detailPage->SetTitle('Brggaleri');
+            $detailPage->SetMenuLabel('Brggaleri');
+            $detailPage->SetHeader(GetPagesHeader());
+            $detailPage->SetFooter(GetPagesFooter());
             $detailPage->SetHttpHandlerName('brg_brggaleri_handler');
             $handler = new PageHTTPHandler('brg_brggaleri_handler', $detailPage);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $detailPage = new brg_brginfoPage('brg_brginfo', $this, array('id'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionsForPage('brg.brginfo'), 'UTF-8');
+            $detailPage = new brg_brginfoPage('brg_brginfo', $this, array('id'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionSetForDataSource('brg.brginfo'), 'UTF-8');
             $detailPage->SetRecordPermission(GetCurrentUserRecordPermissionsForDataSource('brg.brginfo'));
+            $detailPage->SetTitle('Brginfo');
+            $detailPage->SetMenuLabel('Brginfo');
+            $detailPage->SetHeader(GetPagesHeader());
+            $detailPage->SetFooter(GetPagesFooter());
             $detailPage->SetHttpHandlerName('brg_brginfo_handler');
             $handler = new PageHTTPHandler('brg_brginfo_handler', $detailPage);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $detailPage = new brg_brgsatuanPage('brg_brgsatuan', $this, array('id'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionsForPage('brg.brgsatuan'), 'UTF-8');
+            $detailPage = new brg_brgsatuanPage('brg_brgsatuan', $this, array('id'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionSetForDataSource('brg.brgsatuan'), 'UTF-8');
             $detailPage->SetRecordPermission(GetCurrentUserRecordPermissionsForDataSource('brg.brgsatuan'));
+            $detailPage->SetTitle('Brgsatuan');
+            $detailPage->SetMenuLabel('Brgsatuan');
+            $detailPage->SetHeader(GetPagesHeader());
+            $detailPage->SetFooter(GetPagesFooter());
             $detailPage->SetHttpHandlerName('brg_brgsatuan_handler');
             $handler = new PageHTTPHandler('brg_brgsatuan_handler', $detailPage);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $detailPage = new brg_fifoPage('brg_fifo', $this, array('idbarang'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionsForPage('brg.fifo'), 'UTF-8');
+            $detailPage = new brg_fifoPage('brg_fifo', $this, array('idbarang'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionSetForDataSource('brg.fifo'), 'UTF-8');
             $detailPage->SetRecordPermission(GetCurrentUserRecordPermissionsForDataSource('brg.fifo'));
+            $detailPage->SetTitle('Fifo');
+            $detailPage->SetMenuLabel('Fifo');
+            $detailPage->SetHeader(GetPagesHeader());
+            $detailPage->SetFooter(GetPagesFooter());
             $detailPage->SetHttpHandlerName('brg_fifo_handler');
             $handler = new PageHTTPHandler('brg_fifo_handler', $detailPage);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $detailPage = new brg_stokPage('brg_stok', $this, array('idbarang'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionsForPage('brg.stok'), 'UTF-8');
+            $detailPage = new brg_stokPage('brg_stok', $this, array('idbarang'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionSetForDataSource('brg.stok'), 'UTF-8');
             $detailPage->SetRecordPermission(GetCurrentUserRecordPermissionsForDataSource('brg.stok'));
+            $detailPage->SetTitle('Stok');
+            $detailPage->SetMenuLabel('Stok');
+            $detailPage->SetHeader(GetPagesHeader());
+            $detailPage->SetFooter(GetPagesFooter());
             $detailPage->SetHttpHandlerName('brg_stok_handler');
             $handler = new PageHTTPHandler('brg_stok_handler', $detailPage);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $detailPage = new brg_trdPage('brg_trd', $this, array('idbarang'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionsForPage('brg.trd'), 'UTF-8');
+            $detailPage = new brg_trdPage('brg_trd', $this, array('idbarang'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionSetForDataSource('brg.trd'), 'UTF-8');
             $detailPage->SetRecordPermission(GetCurrentUserRecordPermissionsForDataSource('brg.trd'));
+            $detailPage->SetTitle('Trd');
+            $detailPage->SetMenuLabel('Trd');
+            $detailPage->SetHeader(GetPagesHeader());
+            $detailPage->SetFooter(GetPagesFooter());
             $detailPage->SetHttpHandlerName('brg_trd_handler');
             $handler = new PageHTTPHandler('brg_trd_handler', $detailPage);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $detailPage = new brg_trd01Page('brg_trd01', $this, array('kode'), array('kode'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionsForPage('brg.trd01'), 'UTF-8');
+            $detailPage = new brg_trd01Page('brg_trd01', $this, array('kode'), array('kode'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionSetForDataSource('brg.trd01'), 'UTF-8');
             $detailPage->SetRecordPermission(GetCurrentUserRecordPermissionsForDataSource('brg.trd01'));
+            $detailPage->SetTitle('Trd');
+            $detailPage->SetMenuLabel('Trd');
+            $detailPage->SetHeader(GetPagesHeader());
+            $detailPage->SetFooter(GetPagesFooter());
             $detailPage->SetHttpHandlerName('brg_trd01_handler');
             $handler = new PageHTTPHandler('brg_trd01_handler', $detailPage);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $detailPage = new brg_trdmutasiPage('brg_trdmutasi', $this, array('idbarang'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionsForPage('brg.trdmutasi'), 'UTF-8');
+            $detailPage = new brg_trdmutasiPage('brg_trdmutasi', $this, array('idbarang'), array('id'), $this->GetForeignKeyFields(), $this->CreateMasterDetailRecordGrid(), $this->dataset, GetCurrentUserPermissionSetForDataSource('brg.trdmutasi'), 'UTF-8');
             $detailPage->SetRecordPermission(GetCurrentUserRecordPermissionsForDataSource('brg.trdmutasi'));
+            $detailPage->SetTitle('Trdmutasi');
+            $detailPage->SetMenuLabel('Trdmutasi');
+            $detailPage->SetHeader(GetPagesHeader());
+            $detailPage->SetFooter(GetPagesFooter());
             $detailPage->SetHttpHandlerName('brg_trdmutasi_handler');
             $handler = new PageHTTPHandler('brg_trdmutasi_handler', $detailPage);
             GetApplication()->RegisterHTTPHandler($handler);
@@ -18384,7 +18480,7 @@
                 )
             );
             $lookupDataset->setOrderByField('nama', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_idgol_search', 'id', 'nama', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_idgol_nama_search', 'id', 'nama', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -18403,7 +18499,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idbarang', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_brg_defgalery_search', 'id', 'idbarang', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'insert_defgalery_idbarang_search', 'id', 'idbarang', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -18423,7 +18519,7 @@
                 )
             );
             $lookupDataset->setOrderByField('nama', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_idgol_search', 'id', 'nama', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_idgol_nama_search', 'id', 'nama', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -18442,7 +18538,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idbarang', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_brg_defgalery_search', 'id', 'idbarang', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'filter_builder_defgalery_idbarang_search', 'id', 'idbarang', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -18462,7 +18558,7 @@
                 )
             );
             $lookupDataset->setOrderByField('nama', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_idgol_search', 'id', 'nama', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_idgol_nama_search', 'id', 'nama', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -18481,7 +18577,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idbarang', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_brg_defgalery_search', 'id', 'idbarang', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'edit_defgalery_idbarang_search', 'id', 'idbarang', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -18501,7 +18597,7 @@
                 )
             );
             $lookupDataset->setOrderByField('nama', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_idgol_search', 'id', 'nama', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_idgol_nama_search', 'id', 'nama', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $lookupDataset = new TableDataset(
@@ -18520,7 +18616,7 @@
                 )
             );
             $lookupDataset->setOrderByField('idbarang', 'ASC');
-            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_brg_defgalery_search', 'id', 'idbarang', null, 20);
+            $handler = new DynamicSearchHandler($lookupDataset, $this, 'multi_edit_defgalery_idbarang_search', 'id', 'idbarang', null, 20);
             GetApplication()->RegisterHTTPHandler($handler);
         }
        
@@ -18554,7 +18650,7 @@
     
         }
     
-        protected function doCustomDefaultValues(&$values, &$handled) 
+        public function doCustomDefaultValues(&$values, &$handled) 
         {
     
         }
@@ -18629,11 +18725,6 @@
     
         }
     
-        protected function doGetSelectionFilters(FixedKeysArray $columns, &$result)
-        {
-    
-        }
-    
         protected function doGetCustomFormLayout($mode, FixedKeysArray $columns, FormLayout $layout)
         {
     
@@ -18654,23 +18745,27 @@
     
         }
     
-        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
+        protected function doGetCustomPagePermissions(Page $page, PermissionSet &$permissions, &$handled)
         {
     
         }
     
-        protected function doAddEnvironmentVariables(Page $page, &$variables)
+        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
         {
     
         }
     
     }
 
-    SetUpUserAuthorization();
+
 
     try
     {
-        $Page = new brgPage("brg", "brg.php", GetCurrentUserPermissionsForPage("brg"), 'UTF-8');
+        $Page = new brgPage("brg", "brg.php", GetCurrentUserPermissionSetForDataSource("brg"), 'UTF-8');
+        $Page->SetTitle('Brg');
+        $Page->SetMenuLabel('Brg');
+        $Page->SetHeader(GetPagesHeader());
+        $Page->SetFooter(GetPagesFooter());
         $Page->SetRecordPermission(GetCurrentUserRecordPermissionsForDataSource("brg"));
         GetApplication()->SetMainPage($Page);
         GetApplication()->Run();

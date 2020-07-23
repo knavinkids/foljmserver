@@ -1,4 +1,3 @@
-{if $DataGrid.QuickFilter->hasColumns()}
 <div class="addition-block-right pull-right js-quick-filter">
     <div class="quick-filter-toolbar btn-group">
         <div class="input-group js-filter-control">
@@ -44,4 +43,3 @@
     </div>
     <span class="hidden-xs">&thinsp;</span>
 </div>
-{/if}

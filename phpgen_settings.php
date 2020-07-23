@@ -97,7 +97,7 @@ function ApplyCommonPageSettings(Page $page, Grid $grid)
 
 function GetAnsiEncoding() { return 'windows-1252'; }
 
-function Global_AddEnvironmentVariablesHandler(Page $page, &$variables)
+function Global_OnGetCustomPagePermissionsHandler(Page $page, PermissionSet &$permissions, &$handled)
 {
 
 }
@@ -211,13 +211,4 @@ function createConnection()
 
     $connectionFactory = MySqlIConnectionFactory::getInstance();
     return $connectionFactory->CreateConnection($connectionOptions);
-}
-
-/**
- * @param string $pageName
- * @return IPermissionSet
- */
-function GetCurrentUserPermissionsForPage($pageName) 
-{
-    return GetApplication()->GetCurrentUserPermissionSet($pageName);
 }

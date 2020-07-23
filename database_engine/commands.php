@@ -77,12 +77,10 @@ PredefinedAggregate::Init();
 class CustomAggregate extends Aggregate
 {
     private $expression;
-    private $expressionAsString;
 
-    public function __construct($expression, $expressionAsString)
+    public function __construct($expression)
     {
         $this->expression = $expression;
-        $this->expressionAsString = $expressionAsString;
     }
 
     public function AsSQL($fieldAsSQL)
@@ -92,7 +90,7 @@ class CustomAggregate extends Aggregate
 
     public function AsString()
     {
-        return $this->expressionAsString;
+        return $this->expression;
     }
 }
 

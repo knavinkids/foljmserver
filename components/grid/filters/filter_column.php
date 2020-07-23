@@ -63,13 +63,6 @@ class FilterColumn
     }
 
     /**
-     * @param string $value
-     */
-    public function setCaption($value) {
-        $this->caption = $value;
-    }
-
-    /**
      * @return FieldInfo
      */
     public function getFieldInfo()
@@ -104,18 +97,6 @@ class FilterColumn
     {
         if (!is_null($this->getFieldInfo())) {
             return (($this->getFieldInfo()->FieldType == ftDate) || ($this->getFieldInfo()->FieldType == ftDateTime));
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @return boolean
-     */
-    public function typeIsDateTimeExactly()
-    {
-        if (!is_null($this->getFieldInfo())) {
-            return ($this->getFieldInfo()->FieldType == ftDateTime);
         } else {
             return false;
         }

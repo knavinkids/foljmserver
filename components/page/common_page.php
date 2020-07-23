@@ -8,9 +8,6 @@ include_once dirname(__FILE__) . '/../captions.php';
  */
 abstract class CommonPage
 {
-    /** @var PageList */
-    private $pageList;
-
     private $header;
     private $footer;
     private $id;
@@ -112,7 +109,7 @@ abstract class CommonPage
 
     public function GetHeader()
     {
-        return $this->header;
+        return $this->RenderText($this->header);
     }
 
     public function SetHeader($value)
@@ -122,13 +119,19 @@ abstract class CommonPage
 
     public function GetFooter()
     {
-        return $this->footer;
+        return $this->RenderText($this->footer);
     }
 
     public function SetFooter($value)
     {
         $this->footer = $value;
     }
+
+    public function RenderText($text)
+    {
+        return $text;
+    }
+
 
     /**
      * @return Captions
@@ -173,13 +176,4 @@ abstract class CommonPage
     {
         return null;
     }
-
-    public function GetReadyPageList() {
-        if (!$this->pageList) {
-            $this->pageList = new PageList($this);
-        };
-
-        return $this->pageList;
-    }
-
 }

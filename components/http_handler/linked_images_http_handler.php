@@ -19,7 +19,7 @@ class LinkedImagesHTTPHandler extends AbstractHTTPHandler
     }
 
     private function getDataNameAttributeValue() {
-        return $this->fieldName.'_'.implode('_', $this->dataset->GetPrimaryKeyValues());
+        return $this->fieldName.'_'.implode($this->dataset->GetPrimaryKeyValues(), '_');
     }
 
     public function Render(Renderer $renderer)

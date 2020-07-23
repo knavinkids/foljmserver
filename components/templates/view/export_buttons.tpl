@@ -10,7 +10,7 @@
             {foreach from=$buttons item=Item key=Name}
                 {if $Name != 'print_page' and $Name != 'print_all'}
                     {if $Item.BeginNewGroup}<li class="divider"></li>{/if}
-                    <li><a href="{$Item.Href|escapeurl}"{$Item.Target}>
+                    <li><a href="{$Item.Href|escapeurl}">
                             <i class="{$Item.IconClass}"></i>
                             {$Item.Caption}
                         </a></li>

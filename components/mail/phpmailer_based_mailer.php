@@ -115,13 +115,6 @@ class PHPMailerBasedMailer extends Mailer
         }
     }
 
-    /**
-     * @param int $debugLevel
-     */
-    public function setSMTPDebug($debugLevel) {
-        $this->phpMailer->SMTPDebug = $debugLevel;         
-    }
-
     /** @return PHPMailer */
     public function getPHPMailer() {
         return $this->phpMailer;

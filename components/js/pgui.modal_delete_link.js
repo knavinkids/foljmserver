@@ -34,9 +34,6 @@ define([
 
                             grid.removeRow($button.closest('.pg-row'));
                             grid.showMessage(response.message, response.messageDisplayTime);
-                            if (grid.getReloadPageAfterAjaxOperation()) {
-                                location.reload();
-                            }
                         },
                         complete: function() {
                             $modal.modal('hide');

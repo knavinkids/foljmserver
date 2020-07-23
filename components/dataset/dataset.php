@@ -830,11 +830,7 @@ abstract class Dataset implements IFilterable, IDataset {
     public function GetFieldValueByName($fieldName) {
 
         if (!is_null($this->GetFieldByName($fieldName)) && $this->GetFieldByName($fieldName)->getIsCalculated()) {
-            if ($this->insertMode || $this->insertedMode || $this->editMode) {
-                return null;
-            } else {
-                return $this->getFieldDisplayValue($fieldName, $this->getCalculatedFieldValueByName($fieldName));
-            }
+            return $this->getFieldDisplayValue($fieldName, $this->getCalculatedFieldValueByName($fieldName));
         }
 
         if ($this->insertMode || $this->insertedMode) {
@@ -1073,10 +1069,6 @@ abstract class Dataset implements IFilterable, IDataset {
         $this->GetSelectCommand()->ClearAllFilters();
     }
 
-    public function ClearFieldFilters() {
-        $this->GetSelectCommand()->ClearFieldFilters();
-    }
-
     public function AddCompositeFieldFilter($filterLinkType, $fieldNames, $fieldFilters) {
         $this->GetSelectCommand()->AddCompositeFieldFilter(
             $filterLinkType, $fieldNames, $fieldFilters);
@@ -1208,20 +1200,14 @@ abstract class Dataset implements IFilterable, IDataset {
      * @param array $primaryKeyValuesSet
      *        Example for single primary key: array('keys[0]' => array(1), 'keys[1]' => array(2), 'keys[1]' => array(3));
      *        Example for composite primary key: array('keys[0]' => array(1, 'value 1'), 'keys[1]' => array(2, 'value 2'));
-     * @param bool $invertFilter
      */
-    public function applyFilterBasedOnPrimaryKeyValuesSet($primaryKeyValuesSet, $invertFilter = false) {
+    public function applyFilterBasedOnPrimaryKeyValuesSet($primaryKeyValuesSet) {
         $primaryFields = array();
         foreach ($this->GetPrimaryKeyFieldNames() as $fieldName) {
             $primaryFields[] = $this->GetFieldInfoByName($fieldName);
         }
 
-        if ($invertFilter) {
-            $resultFilter = new CompositeFilter('AND');
-        } else{
-            $resultFilter = new CompositeFilter('OR');
-        }
-
+        $resultFilter = new CompositeFilter('OR');
         foreach ($primaryKeyValuesSet as $primaryKeysValues) {
             if (count($primaryKeysValues) !== count($primaryFields)) {
                 throw new LogicException('Wrong primary key values set to apply filter');
@@ -1230,16 +1216,11 @@ abstract class Dataset implements IFilterable, IDataset {
             $recordFilter = new CompositeFilter('AND');
 
             foreach ($primaryKeysValues as $i => $value) {
-                if ($invertFilter) {
-                    $recordFilter->addFilter($primaryFields[$i], FieldFilter::DoesNotEqual($value));
-                } else {
-                    $recordFilter->addFilter($primaryFields[$i], FieldFilter::Equals($value));
-                }
+                $recordFilter->addFilter($primaryFields[$i], FieldFilter::Equals($value));
             }
 
             $resultFilter->addFilter(null, $recordFilter);
         }
-
         $this->getSelectCommand()->AddCompositeFilter($resultFilter);
     }
 

@@ -62,10 +62,5 @@ class SecureApplication
         return $this->dataSourceRecordPermissionRetrieveStrategy;
     }
 
-    /** @return boolean */
-    public function isAuthenticationEnabled() {
-        return !($this->userAuthentication instanceof NullUserAuthentication);
-    }
-
 }
 

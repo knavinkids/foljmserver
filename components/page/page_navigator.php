@@ -55,7 +55,7 @@ class PageNavigatorPage {
     }
 
     function GetHint() {
-        return $this->hint;
+        return $this->renderText ? $this->page->RenderText($this->hint) : $this->hint;
     }
 
     function GetPage() {
@@ -123,6 +123,16 @@ class AbstractPageNavigator {
 
     /** @var integer */
     private $currentPageNumber;
+
+    /** @var array */
+    private $ignorePageNavigationOperations = array(
+        OPERATION_PRINT_ALL
+        //, OPERATION_EXCEL_EXPORT
+        //, OPERATION_WORD_EXPORT
+        //, OPERATION_XML_EXPORT
+        //, OPERATION_CSV_EXPORT
+        //, OPERATION_PDF_EXPORT
+    );
 
     function __construct($name, $page, $dataset, $caption, $pageNavigatorList, $prefix = null) {
         $this->name = $name;
@@ -214,7 +224,9 @@ class AbstractPageNavigator {
             $this->ResetPageNumber();
         }
 
-        $this->ApplyPageToDataset($this->currentPageNumber, $this->dataset);
+        if (!in_array(GetOperation(), $this->ignorePageNavigationOperations)) {
+            $this->ApplyPageToDataset($this->currentPageNumber, $this->dataset);
+        }
     }
 
     public function BuildPages(LinkBuilder $linkBuilder) {

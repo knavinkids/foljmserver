@@ -31,11 +31,6 @@ abstract class Validator
         StringUtils::AddStr($result, $this->DoGetAdditionalAttributes(), ' ');
         return $result;
     }
-
-    /** @param string */
-    public function setMessage($value) {
-        $this->message = $value;
-    }
 }
 
 class RequiredValidator extends Validator
@@ -305,10 +300,5 @@ class ValidatorCollection
             StringUtils::AddStr($result, StringUtils::Format('data-validation="%s"', $validationAttr), ' ');
 
         return $result;
-    }
-
-    /** @return Validator[] */
-    public function getItems() {
-        return $this->list;
     }
 }

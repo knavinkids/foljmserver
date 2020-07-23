@@ -67,10 +67,6 @@ define(['pgui.shortcuts', 'pgui.utils'], function (shortcuts, utils) {
             $grid.container.find('.pgui-add:first').get(0).click();
         }
 
-        if (params.action === undefined && $grid.getReloadPageAfterAjaxOperation()) {
-            location.reload();
-        }
-
         return false;
     }
 

@@ -10,14 +10,6 @@ class Chart
     const TYPE_LINE = 'Line';
     const TYPE_AREA = 'Area';
     const TYPE_GEO = 'Geo';
-    const TYPE_CANDLESTICK = 'Candlestick';
-    const TYPE_HISTOGRAM = 'Histogram';
-    const TYPE_STEPPEDAREA = 'SteppedArea';
-    const TYPE_BUBBLE = 'Bubble';
-    const TYPE_TIMELINE = 'Timeline';
-    const TYPE_GANTT = 'Gantt';
-    const TYPE_TREEMAP = 'TreeMap';
-    const TYPE_SCATTER = 'Scatter';
 
     /**
      * @var Dataset
@@ -28,11 +20,6 @@ class Chart
      * @var string
      */
     private $id;
-
-    /**
-     * @var string
-     */
-    private $sql;
 
     /**
      * @var string
@@ -63,9 +50,6 @@ class Chart
      * @var array
      */
     private $domainColumn;
-
-    /** @var string */
-    private $generateTooltipFunction;
 
     /**
      * @param string  $id
@@ -161,7 +145,6 @@ class Chart
             'data' => $this->getChartData(),
             'options' => $options,
             'height' => $options['height'],
-            'generateTooltipFunctionCode' => $this->generateTooltipFunction
         );
     }
 
@@ -183,13 +166,15 @@ class Chart
 
     private function getChartData()
     {
+        if (is_null($this->domainColumn)) {
+            throw new LogicException('Chart must have a domain column');
+        }
+
         $rows = array();
         $rawRows = $this->fetchRows();
 
         $columns = $this->columns;
-        if (isset($this->domainColumn)) {
-            array_unshift($columns, $this->domainColumn);
-        }
+        array_unshift($columns, $this->domainColumn);
 
         foreach ($rawRows as $rawRow) {
             $row = array();
@@ -233,7 +218,6 @@ class Chart
                 return $date->format('c');
             case 'int':
                 return (int) $value;
-            case 'number';
             case 'float':
                 return (float) $value;
             default:
@@ -252,33 +236,5 @@ class Chart
         );
 
         return $conn->fetchAll($finalSql);
-    }
-
-    /**
-     * @return string
-     */
-    public function getSql() {
-        return $this->sql;
-    }
-
-    /**
-     * @param string $sql
-     */
-    public function setSql($sql) {
-        $this->sql = $sql;
-    }
-
-    /**
-     * @param string $value
-     */
-    public function setGenerateTooltipFunction($value) {
-        $this->generateTooltipFunction = $value;
-    }
-
-    /**
-     * @return string
-     */
-    public function getGenerateTooltipFunction() {
-        return $this->generateTooltipFunction;
     }
 }

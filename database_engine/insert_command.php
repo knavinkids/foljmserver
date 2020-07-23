@@ -99,16 +99,15 @@ class CustomInsertCommand extends EngCommand
     public function GetSQL()
     {
         $result = $this->sql;
-        foreach($this->fields as $fieldInfo) {
-            if (array_key_exists($fieldInfo->Name, $this->fieldValues)) {
+        foreach($this->fields as $fieldInfo)
+        {
+            if (array_key_exists($fieldInfo->Name, $this->fieldValues))
+            {
                 $result = ReplaceFirst($result, ':' . $fieldInfo->Name,
                     $this->GetCommandImp()->GetFieldValueForInsert(
                     $fieldInfo,
                     $this->fieldValues[$fieldInfo->Name],
                     isset($this->setToDefaultFields[$fieldInfo->Name])));
-            }
-            else {
-                $result = ReplaceFirst($result, ':' . $fieldInfo->Name, 'NULL');
             }
         }
         return $result;

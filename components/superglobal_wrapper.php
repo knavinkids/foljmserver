@@ -68,7 +68,8 @@ class SuperGlobals
 
     public function RefineInputValue($value)
     {
-        if (function_exists('get_magic_quotes_gpc()') && get_magic_quotes_gpc()) {
+        if(get_magic_quotes_gpc())
+        {
             if (is_array($value))
                 return $value;
             else

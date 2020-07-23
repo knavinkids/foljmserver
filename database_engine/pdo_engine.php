@@ -57,22 +57,24 @@ abstract class PDOConnection extends EngConnection
         return $this->connection->lastInsertId();
     }
 
-    public function ExecScalarSQL($sql) {
-        $this->logQuery($sql);
+    protected function doExecScalarSQL($sql)
+    {
         if ($queryHandle = $this->connection->query($sql)) {
             $row = $queryHandle->fetch(PDO::FETCH_NUM);
-            if ($row === false) {
-                $this->raiseSQLStatementReturnsNoRowsException($sql);
-            } else {
+            if ($row === false)
+            {
+                return false;
+            }
+            else
+            {
                 return $row[0];
             }
-        } else {
-            $this->raiseSQLExecutionException($sql);
         }
+        return false;
     }
 
-    protected  function doExecQueryToArray($sql, &$array)
-    {
+	protected  function doExecQueryToArray($sql, &$array)
+	{
         if ($queryHandle = $this->connection->query($sql)) {
             while ($row = $queryHandle->fetch(PDO::FETCH_ASSOC)) {
                 $array[] = $row;
@@ -219,11 +221,7 @@ class PDODataReader extends EngDataReader
 
     public function GetFieldValueByName($fieldName)
     {
-        if ($this->lastFetchedRow) {
-            return $this->GetActualFieldValue($fieldName, $this->lastFetchedRow[$fieldName]);
-        } else {
-            return null;
-        }
+        return $this->GetActualFieldValue($fieldName, $this->lastFetchedRow[$fieldName]);
     }
 
     protected function LastError()

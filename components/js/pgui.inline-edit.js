@@ -47,9 +47,6 @@ define(['pgui.form_collection', 'pgui.utils', 'jquery.query'], function (FormCol
                         if (params && params.action == 'edit') {
                             $newRow.find('[data-inline-operation=edit]').first().click();
                         }
-                        if (params.action === undefined && grid.getReloadPageAfterAjaxOperation()) {
-                            location.reload();
-                        }
                     }
 
                     return true;
@@ -83,7 +80,7 @@ define(['pgui.form_collection', 'pgui.utils', 'jquery.query'], function (FormCol
                 var containers = [];
                 for (var i = 0; i < count; i++) {
                     var $container = createContainer(grid);
-                    grid.container.find('.pg-row-list:first').prepend($container);
+                    grid.container.find('.pg-row-list').prepend($container);
                     containers.push($container);
                 }
 
@@ -138,9 +135,6 @@ define(['pgui.form_collection', 'pgui.utils', 'jquery.query'], function (FormCol
 
                                 if (params && params.action == 'edit') {
                                     $newRow.find('[data-column-name=edit] > a').first().click();
-                                }
-                                if (params.action === undefined && grid.getReloadPageAfterAjaxOperation()) {
-                                    location.reload();
                                 }
                             }
 

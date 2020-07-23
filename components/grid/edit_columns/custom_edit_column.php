@@ -405,9 +405,4 @@ class CustomEditColumn implements ColumnInterface
     {
         return $this->allowSingleViewCellEdit;
     }
-
-    /** @return Validator[] */
-    public function getValidators() {
-        return $this->GetEditControl()->GetValidatorCollection()->getItems();
-    }
 }

@@ -1,7 +1,17 @@
-define(['pgui.form-page-main', 'pgui.validation-utils'], function(initFormPage, validationUtils) {
+define(['pgui.form-page-main'], function(initFormPage) {
     return function () {
         initFormPage();
 
-        window['resetPasswordFormValidation'] = validationUtils.validatePasswordBasedForm;
+        function validateForm(fieldValues, errorInfo) {
+            if (fieldValues.password !== fieldValues.confirmedpassword) {
+                errorInfo.SetMessage('Password and confirmation password must match');
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        window['resetPasswordFormValidation'] = validateForm;
     }
 });

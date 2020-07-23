@@ -3,21 +3,6 @@ define([
     'jquery.validate'
 ], function(_) {
 
-    function validateTabs(element) {
-        var $formTabsContainer = $(element).closest('form').find('.form-tabs-container');
-        if ($formTabsContainer.length > 0) {
-            $formTabsContainer.find('a span.required').remove();
-            var $tabContent = $(element).closest('.tab-content');
-            if ($tabContent.length > 0) {
-                $tabContent.find('.tab-pane:has(.form-group.has-error)').each(function() {
-                    var id = $(this).attr('id');
-                    var $tab = $formTabsContainer.find('a[href^="#' + id + '"]');
-                    $tab.append(' <span class="required">***</span>');
-                });
-            }
-        }
-    }
-
     var methods = {
 
         init: function(options) {
@@ -34,13 +19,11 @@ define([
                 validate_success: function(element) {
                     var $formGroup = $(element).closest('.form-group').removeClass('has-error');
                     $formGroup.prev('.form-group-label').removeClass('has-error');
-                    validateTabs(element);
                     $(element).remove();
                 },
                 highlight: function(element) {
                     var $formGroup = $(element).closest('.form-group').addClass('has-error');
-                    $formGroup.prev('.form-group-label').addClass('has-error');
-                    validateTabs(element);
+                    $formGroup.prev('.form-group-label').addClass('has-error')
                 },
                 unhighlight: undefined
             };

@@ -170,22 +170,11 @@ abstract class BaseSelectCommand extends EngCommand implements IFilterable {
     }
 
     public final function ClearAllFilters() {
-        $this->ClearFieldFilters();
-        $this->ClearCompositeFieldFilters();
-        $this->ClearCustomConditions();
-    }
-
-    public function ClearFieldFilters() {
         $this->fieldFilters = array();
-    }
-
-    public function ClearCompositeFieldFilters() {
         $this->compositeFieldFilters = array();
-    }
-
-    public function ClearCustomConditions() {
         $this->customConditions = array();
     }
+
     #endregion
 
     /**
@@ -331,11 +320,6 @@ class CustomSelectCommand extends BaseSelectCommand {
     }
 
     #endregion
-
-    public function setSql($sql) {
-        $this->sql = $sql;
-    }
-
 }
 
 class SelectCommand extends BaseSelectCommand {

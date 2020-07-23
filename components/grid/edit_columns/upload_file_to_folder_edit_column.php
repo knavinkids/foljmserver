@@ -18,8 +18,6 @@ class UploadFileToFolderColumn extends CustomEditColumn
     private $storeThumbnailNameOnly = false;
     /** @var ImageFilter */
     private $thumbnailImageFilter;
-    /** @var int */
-    private $maxUploadFileSize = 0;
 
     /** @var Delegate */
     private $generateFileNameDelegate;
@@ -78,7 +76,7 @@ class UploadFileToFolderColumn extends CustomEditColumn
 
         $result = $this->GetDataset()->GetFieldValueByName($this->GetFieldName());
 
-        if (!is_null($result) && $this->keepFileNameOnly) {
+        if ($this->keepFileNameOnly) {
             $targetFolder = FormatDatasetFieldsTemplate($this->GetDataset(), $this->targetFolderTemplate);
             $result = Path::Combine($targetFolder, $result);
         }
@@ -176,8 +174,6 @@ class UploadFileToFolderColumn extends CustomEditColumn
             $valueChanged
         );
 
-        $this->checkFileSizeLimitation($value);
-
         if ($valueChanged && $value === null) {
             $this->clearImageAndThumbnail();
             return;
@@ -245,28 +241,6 @@ class UploadFileToFolderColumn extends CustomEditColumn
                         $this->storeThumbnailNameOnly ? basename($thumbnailFileName) : $thumbnailFileName
                     );
                 }
-            }
-        }
-    }
-
-    /** @return int */
-    public function getMaxUploadFileSize() {
-        return $this->maxUploadFileSize;
-    }
-
-    /** @var int $value */
-    public function setMaxUploadFileSize($value) {
-        $this->maxUploadFileSize = $value;
-    }
-
-    /**
-     * @param string $fileName
-     * @throws FileSizeExceedMaxSize
-     */
-    private function checkFileSizeLimitation($fileName) {
-        if ($this->maxUploadFileSize > 0) {
-            if (filesize($fileName) > $this->maxUploadFileSize) {
-                throw new FileSizeExceedMaxSize($this->GetFieldName(), filesize($fileName), $this->maxUploadFileSize);
             }
         }
     }

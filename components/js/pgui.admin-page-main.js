@@ -213,7 +213,6 @@ define([
                                 utils.showErrorMessage(message);
                             })
                             .done(function (result) {
-                                dialog.modal('hide');
                                 user.name(result.name);
                                 user.email(result.email);
                                 user.status(result.status);
@@ -224,10 +223,10 @@ define([
                                 utils.showErrorMessage(message);
                             })
                             .done(function (result) {
-                                dialog.modal('hide');
                                 user.name(result.username);
                             });
                     }
+                    dialog.modal('hide');
                 });
 
                 dialog.modal('show');
@@ -277,7 +276,6 @@ define([
                                 utils.showErrorMessage(message);
                             })
                             .done(function (result) {
-                                dialog.modal('hide');
                                 self.users.push(
                                     new PhpGenAdmin.UserViewModel(
                                         self.api,
@@ -295,7 +293,6 @@ define([
                                 utils.showErrorMessage(message);
                             })
                             .done(function (result) {
-                                dialog.modal('hide');
                                 self.users.push(
                                     new PhpGenAdmin.UserViewModel(
                                         self.api,
@@ -307,6 +304,7 @@ define([
                                     ));
                             });
                     }
+                    dialog.modal('hide');
                 });
 
                 dialog.modal('show');

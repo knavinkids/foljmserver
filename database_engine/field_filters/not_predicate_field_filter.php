@@ -1,11 +1,10 @@
 <?php
 
-class NotPredicateFilter extends CompositeFilter{
+class NotPredicateFilter {
     public $InnerFilter;
 
     public function __construct($innerFilter)
     {
-        parent::__construct('OR');
         $this->InnerFilter = $innerFilter;
     }
 

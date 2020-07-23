@@ -103,7 +103,7 @@ abstract class Renderer
 
     #region Columns
 
-    protected function GetNullValuePresentation(AbstractViewColumn $column)  {
+    private function GetNullValuePresentation(AbstractViewColumn $column)  {
         if ($this->ShowHtmlNullValue()) {
             $nullLabel = $column->getNullLabel();
             if (is_null($nullLabel)) {
@@ -139,7 +139,7 @@ abstract class Renderer
     {
         $customValue = $this->GetCustomRenderedViewColumn($column, $rowValues);
         if (isset($customValue)) {
-            return $customValue;
+            return $column->GetGrid()->GetPage()->RenderText($customValue);
         }
 
         return $this->Render($column);
@@ -205,9 +205,7 @@ abstract class Renderer
     private function viewColumnRenderHyperlinkProperties(AbstractDatasetFieldViewColumn $column, $value)
     {
         if ($this->HtmlMarkupAvailable()) {
-            if (!is_null($column->getLookupRecordModalViewLink())) {
-                return sprintf('<a href="#" data-modal-operation="view" data-content-link="%s">%s</a>', $column->getLookupRecordModalViewLink(), $value);
-            } elseif ($column->getDisplayLinkedImagesByClick()) {
+            if ($column->getDisplayLinkedImagesByClick()) {
                 return $this->viewColumnRenderLinkedImagesProperties($column, $value);
             } elseif (!is_null($column->getHrefTemplate())) {
                 $href = FormatDatasetFieldsTemplate(
@@ -253,7 +251,7 @@ abstract class Renderer
         return $value;
     }
 
-    protected function getColumnStyle(AbstractDatasetFieldViewColumn $column)
+    private function getColumnStyle(AbstractDatasetFieldViewColumn $column)
     {
         $styleBuilder = new StyleBuilder();
 
@@ -283,6 +281,7 @@ abstract class Renderer
     public function RenderTextViewColumn(TextViewColumn $column)
     {
         $value = $column->GetValue();
+        $dataset = $column->GetDataset();
 
         if (!isset($value)) {
             $this->result = $this->GetNullValuePresentation($column);
@@ -312,7 +311,7 @@ abstract class Renderer
             $value = $this->getWrappedViewColumnValue(
                 $column,
                 $value
-                . '... <a class="js-more-hint" href="#">'
+                . '... <a class="js-more-hint" href="' . $column->GetMoreLink() . '">'
                 . $this->captions->GetMessageString('more') . '</a>'
                 . '<div class="js-more-box hide">' . $originalValue . '</div>'
             );
@@ -441,7 +440,12 @@ abstract class Renderer
         $this->result = $this->getWrappedViewColumnValue($column, sprintf(
             '%s%s%s',
             $prefix,
-            $column->getFormattedValue(),
+            number_format(
+                (double) $column->GetValue(),
+                $column->GetNumberAfterDecimal(),
+                $column->GetDecimalSeparator(),
+                $column->GetThousandsSeparator()
+            ),
             $suffix
         ));
     }
@@ -489,8 +493,7 @@ abstract class Renderer
      */
     public function RenderDownloadDataViewColumn(DownloadDataColumn $column)
     {
-        $value = $column->GetValue();
-        if ($value == null) {
+        if (is_null($column->GetValue())) {
             $this->result = $this->GetNullValuePresentation($column);
             return;
         }
@@ -654,41 +657,13 @@ abstract class Renderer
             array(
                 'common' => $loginPage->getCommonViewData(),
                 'Page' => $loginPage,
-                'LoginControl' => $loginPage->GetLoginControl(),
-                'ReCaptcha' => $loginPage->getReCaptcha()
+                'LoginControl' => $loginPage->GetLoginControl()
             ),
-            array_merge(
-                $customParams,
-                array(
-                    'Title' => $loginPage->GetTitle(),
-                    'layoutTemplate' => $layoutTemplate,
-                    'InactivityTimeoutExpired' => $loginPage->getInactivityTimeoutExpired()
-                )
-            )
-        );
-    }
-
-    /**
-     * @param LoginControl $loginControl
-     */
-    public function RenderLoginControl($loginControl)  {
-        $customParams = array();
-        $template = $loginControl->getPage()->GetCustomTemplate(
-            PagePart::LoginControl,
-            null,
-            'login_control.tpl',
-            $customParams
-        );
-
-        $this->DisplayTemplate(
-            $template,
-            array(
-                'LoginControl' => $loginControl,
-                'SecurityFeedbackPositive' => $loginControl->getSecurityFeedbackPositive(),
-                'SecurityFeedbackNegative' => $loginControl->getSecurityFeedbackNegative(),
-                'ReCaptcha' => $loginControl->getReCaptcha()
-            ),
-            $customParams
+            array_merge($customParams, array(
+                'Title' => $loginPage->GetTitle(),
+                'layoutTemplate' => $layoutTemplate,
+                'InactivityTimeoutExpired' => $loginPage->getInactivityTimeoutExpired()
+            ))
         );
     }
 
@@ -766,15 +741,11 @@ abstract class Renderer
             array(
                 'common' => $page->getCommonViewData()->setEntryPoint('register'),
                 'Page' => $page,
-                'RegistrationForm' => $page->getRegistrationForm(),
-                'ReCaptcha' => $page->getReCaptcha()
+                'RegistrationForm' => $page->getRegistrationForm()
             ),
-            array_merge(
-                $customParams,
-                array(
-                    'layoutTemplate' => $layoutTemplate
-                )
-            )
+            array_merge($customParams, array(
+                'layoutTemplate' => $layoutTemplate
+            ))
         );
     }
 
@@ -794,7 +765,6 @@ abstract class Renderer
             $template,
             array(
                 'RegistrationForm' => $form,
-                'ReCaptcha' => $form->getRegistrationPage()->getReCaptcha()
             ),
             $customParams
         );
@@ -831,7 +801,6 @@ abstract class Renderer
             array(
                 'common' => $page->getCommonViewData()->setEntryPoint('form'),
                 'Page' => $page,
-                'ReCaptcha' => $page->getReCaptcha()
             ),
             array_merge($customParams, array(
                 'layoutTemplate' => $layoutTemplate
@@ -908,7 +877,6 @@ abstract class Renderer
             array(
                 'common' => $page->getCommonViewData()->setEntryPoint('form'),
                 'Page' => $page,
-                'ReCaptcha' => $page->getReCaptcha()
             ),
             array_merge($customParams, array(
                 'layoutTemplate' => $layoutTemplate
@@ -919,6 +887,18 @@ abstract class Renderer
     #endregion
 
     #region Page parts
+
+    /**
+     * @param ShowTextBlobHandler $textBlobViewer
+     */
+    public function RenderTextBlobViewer($textBlobViewer)
+    {
+        $this->DisplayTemplate('text_blob_viewer.tpl',
+            array(
+                'Viewer' => $textBlobViewer,
+                'Page' => $textBlobViewer->GetParentPage()),
+            array());
+    }
 
     public abstract function RenderGrid(Grid $Grid);
 
@@ -1060,8 +1040,6 @@ abstract class Renderer
             'HiddenValues' => $hiddenValues,
             'isMultiEditOperation' => $operation === OPERATION_MULTI_EDIT,
             'isMultiUploadOperation' => $operation === OPERATION_MULTI_UPLOAD,
-            'ShowErrorsOnTop' => $page->getShowFormErrorsOnTop(),
-            'ShowErrorsAtBottom' => $page->getShowFormErrorsAtBottom()
         )));
 
         return $this->result;
@@ -1165,6 +1143,30 @@ abstract class Renderer
         );
     }
 
+
+    /**
+     * @param LoginControl $loginControl
+     */
+    public function RenderLoginControl($loginControl)  {
+        $customParams = array();
+        $template = $loginControl->getPage()->GetCustomTemplate(
+            PagePart::LoginControl,
+            null,
+            'login_control.tpl',
+            $customParams
+        );
+
+        $this->DisplayTemplate(
+            $template,
+            array(
+                'LoginControl' => $loginControl,
+                'SecurityFeedbackPositive' => $loginControl->getSecurityFeedbackPositive(),
+                'SecurityFeedbackNegative' => $loginControl->getSecurityFeedbackNegative(),
+            ),
+            $customParams
+        );
+    }
+
     #endregion
 
     /**
@@ -1175,7 +1177,7 @@ abstract class Renderer
         $this->DisplayTemplate('charts/chart.tpl', array(), array(
             'type' => $chart->getChartType(),
             'chart' => $chart->getViewData(),
-            'uniqueId' => 'chart_' . uniqid(),
+            'uniqueId' => uniqid(),
         ));
     }
 

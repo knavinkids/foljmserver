@@ -2,7 +2,6 @@
 
 class PagePart {
     const Grid = 'grid';
-    const GridToolbar = 'grid-toolbar';
     const GridRow = 'grid-row';
     const VerticalGrid = 'vertical-grid';
     const PageList = 'page-list';

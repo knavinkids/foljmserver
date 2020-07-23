@@ -10,11 +10,13 @@
 
     include_once dirname(__FILE__) . '/components/startup.php';
     include_once dirname(__FILE__) . '/components/application.php';
-    include_once dirname(__FILE__) . '/' . 'authorization.php';
 
 
     include_once dirname(__FILE__) . '/' . 'database_engine/mysql_engine.php';
-    include_once dirname(__FILE__) . '/' . 'components/page/page_includes.php';
+    include_once dirname(__FILE__) . '/' . 'components/page/page.php';
+    include_once dirname(__FILE__) . '/' . 'components/page/detail_page.php';
+    include_once dirname(__FILE__) . '/' . 'components/page/nested_form_page.php';
+
 
     function GetConnectionOptions()
     {
@@ -35,58 +37,53 @@
     {
         protected function DoBeforeCreate()
         {
-            $this->SetTitle('Barang');
-            $this->SetMenuLabel('Barang');
-            $this->SetHeader(GetPagesHeader());
-            $this->SetFooter(GetPagesFooter());
-    
             $this->dataset = new TableDataset(
                 MySqlIConnectionFactory::getInstance(),
                 GetConnectionOptions(),
                 '`barang`');
             $this->dataset->addFields(
                 array(
-                    new StringField('kode', true, true),
+                    new StringField('kode', true),
                     new IntegerField('id', true, true),
-                    new StringField('nama', false, true),
-                    new StringField('golongan', false, true),
-                    new StringField('kelompok', false, true),
-                    new StringField('jenis', false, true),
-                    new StringField('merk', false, true),
-                    new StringField('satuan', false, true),
-                    new IntegerField('beli', false, true),
-                    new IntegerField('jual', false, true),
-                    new IntegerField('jual1', false, true),
-                    new IntegerField('jual2', false, true),
-                    new IntegerField('jual3', false, true),
-                    new IntegerField('jual4', false, true),
-                    new IntegerField('jual5', false, true),
-                    new IntegerField('rek', false, true),
-                    new IntegerField('stok', false, true),
-                    new IntegerField('poin', false, true),
-                    new IntegerField('pembagi', false, true),
-                    new IntegerField('kg', false, true),
-                    new IntegerField('rekhpp', false, true),
-                    new StringField('kd', false, true),
+                    new StringField('nama'),
+                    new StringField('golongan'),
+                    new StringField('kelompok'),
+                    new StringField('jenis'),
+                    new StringField('merk'),
+                    new StringField('satuan'),
+                    new IntegerField('beli'),
+                    new IntegerField('jual'),
+                    new IntegerField('jual1'),
+                    new IntegerField('jual2'),
+                    new IntegerField('jual3'),
+                    new IntegerField('jual4'),
+                    new IntegerField('jual5'),
+                    new IntegerField('rek'),
+                    new IntegerField('stok'),
+                    new IntegerField('poin'),
+                    new IntegerField('pembagi'),
+                    new IntegerField('kg'),
+                    new IntegerField('rekhpp'),
+                    new StringField('kd'),
                     new BlobField('gambar'),
-                    new IntegerField('markup1', false, true),
-                    new IntegerField('markup2', false, true),
-                    new IntegerField('markup3', false, true),
-                    new IntegerField('markup4', false, true),
-                    new IntegerField('markup5', false, true),
-                    new IntegerField('markupbeli', false, true),
-                    new IntegerField('stokminimal', false, true),
-                    new IntegerField('minimal', false, true),
-                    new StringField('hdasar', false, true),
-                    new IntegerField('aktif', false, true),
+                    new IntegerField('markup1'),
+                    new IntegerField('markup2'),
+                    new IntegerField('markup3'),
+                    new IntegerField('markup4'),
+                    new IntegerField('markup5'),
+                    new IntegerField('markupbeli'),
+                    new IntegerField('stokminimal'),
+                    new IntegerField('minimal'),
+                    new StringField('hdasar'),
+                    new IntegerField('aktif'),
                     new StringField('supplier'),
-                    new IntegerField('qtydos', false, true),
-                    new StringField('rak', false, true),
+                    new IntegerField('qtydos'),
+                    new StringField('rak'),
                     new StringField('deskripsi'),
-                    new IntegerField('idgol', true, true),
-                    new IntegerField('defsatuan', false, true),
-                    new IntegerField('isi', false, true),
-                    new IntegerField('defgalery', false, true)
+                    new IntegerField('idgol', true),
+                    new IntegerField('defsatuan'),
+                    new IntegerField('isi'),
+                    new IntegerField('defgalery')
                 )
             );
         }
@@ -1442,6 +1439,7 @@
             $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('barangGrid_supplier_handler_list');
             $column->setMinimalVisibility(ColumnVisibility::PHONE);
             $column->SetDescription('');
             $column->SetFixedWidth(null);
@@ -1476,6 +1474,7 @@
             $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('barangGrid_deskripsi_handler_list');
             $column->setMinimalVisibility(ColumnVisibility::PHONE);
             $column->SetDescription('');
             $column->SetFixedWidth(null);
@@ -1842,6 +1841,7 @@
             $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('barangGrid_supplier_handler_view');
             $grid->AddSingleRecordViewColumn($column);
             
             //
@@ -1867,6 +1867,7 @@
             $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('barangGrid_deskripsi_handler_view');
             $grid->AddSingleRecordViewColumn($column);
             
             //
@@ -2144,7 +2145,7 @@
             //
             $editor = new ImageUploader('gambar_edit');
             $editor->SetShowImage(false);
-            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'barang_gambar_handler_edit');
+            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'barangGrid_gambar_handler_edit');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -2567,7 +2568,7 @@
             //
             $editor = new ImageUploader('gambar_edit');
             $editor->SetShowImage(false);
-            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'barang_gambar_handler_multi_edit');
+            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'barangGrid_gambar_handler_multi_edit');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -2990,7 +2991,7 @@
             //
             $editor = new ImageUploader('gambar_edit');
             $editor->SetShowImage(false);
-            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'barang_gambar_handler_insert');
+            $editColumn = new FileUploadingColumn('Gambar', 'gambar', $editor, $this->dataset, false, false, 'barangGrid_gambar_handler_insert');
             $editColumn->SetAllowSetToNull(true);
             $editColumn->SetAllowSetToDefault(true);
             $this->ApplyCommonColumnEditProperties($editColumn);
@@ -3493,6 +3494,7 @@
             $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('barangGrid_supplier_handler_print');
             $grid->AddPrintColumn($column);
             
             //
@@ -3518,6 +3520,7 @@
             $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('barangGrid_deskripsi_handler_print');
             $grid->AddPrintColumn($column);
             
             //
@@ -3869,6 +3872,7 @@
             $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('barangGrid_supplier_handler_export');
             $grid->AddExportColumn($column);
             
             //
@@ -3894,6 +3898,7 @@
             $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('barangGrid_deskripsi_handler_export');
             $grid->AddExportColumn($column);
             
             //
@@ -4245,6 +4250,7 @@
             $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('barangGrid_supplier_handler_compare');
             $grid->AddCompareColumn($column);
             
             //
@@ -4270,6 +4276,7 @@
             $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
             $column->SetOrderable(true);
             $column->SetMaxLength(75);
+            $column->SetFullTextWindowHandlerName('barangGrid_deskripsi_handler_compare');
             $grid->AddCompareColumn($column);
             
             //
@@ -4403,22 +4410,86 @@
             $handler = new DownloadHTTPHandler($this->dataset, 'gambar', 'gambar_handler', '', '', true);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $handler = new DownloadHTTPHandler($this->dataset, 'gambar', 'gambar_handler', '', '', true);
+            //
+            // View column for supplier field
+            //
+            $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'barangGrid_supplier_handler_list', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for deskripsi field
+            //
+            $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'barangGrid_deskripsi_handler_list', $column);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $handler = new DownloadHTTPHandler($this->dataset, 'gambar', 'gambar_handler', '', '', true);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'barang_gambar_handler_insert', new NullFilter());
+            //
+            // View column for supplier field
+            //
+            $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'barangGrid_supplier_handler_print', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for deskripsi field
+            //
+            $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'barangGrid_deskripsi_handler_print', $column);
             GetApplication()->RegisterHTTPHandler($handler);
             
             $handler = new DownloadHTTPHandler($this->dataset, 'gambar', 'gambar_handler', '', '', true);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'barang_gambar_handler_edit', new NullFilter());
+            //
+            // View column for supplier field
+            //
+            $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'barangGrid_supplier_handler_compare', $column);
             GetApplication()->RegisterHTTPHandler($handler);
             
-            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'barang_gambar_handler_multi_edit', new NullFilter());
+            //
+            // View column for deskripsi field
+            //
+            $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'barangGrid_deskripsi_handler_compare', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'barangGrid_gambar_handler_insert', new NullFilter());
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $handler = new DownloadHTTPHandler($this->dataset, 'gambar', 'gambar_handler', '', '', true);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for supplier field
+            //
+            $column = new TextViewColumn('supplier', 'supplier', 'Supplier', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'barangGrid_supplier_handler_view', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            //
+            // View column for deskripsi field
+            //
+            $column = new TextViewColumn('deskripsi', 'deskripsi', 'Deskripsi', $this->dataset);
+            $column->SetOrderable(true);
+            $handler = new ShowTextBlobHandler($this->dataset, $this, 'barangGrid_deskripsi_handler_view', $column);
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'barangGrid_gambar_handler_edit', new NullFilter());
+            GetApplication()->RegisterHTTPHandler($handler);
+            
+            $handler = new ImageHTTPHandler($this->dataset, 'gambar', 'barangGrid_gambar_handler_multi_edit', new NullFilter());
             GetApplication()->RegisterHTTPHandler($handler);
         }
        
@@ -4452,7 +4523,7 @@
     
         }
     
-        protected function doCustomDefaultValues(&$values, &$handled) 
+        public function doCustomDefaultValues(&$values, &$handled) 
         {
     
         }
@@ -4527,11 +4598,6 @@
     
         }
     
-        protected function doGetSelectionFilters(FixedKeysArray $columns, &$result)
-        {
-    
-        }
-    
         protected function doGetCustomFormLayout($mode, FixedKeysArray $columns, FormLayout $layout)
         {
     
@@ -4552,23 +4618,27 @@
     
         }
     
-        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
+        protected function doGetCustomPagePermissions(Page $page, PermissionSet &$permissions, &$handled)
         {
     
         }
     
-        protected function doAddEnvironmentVariables(Page $page, &$variables)
+        protected function doGetCustomRecordPermissions(Page $page, &$usingCondition, $rowData, &$allowEdit, &$allowDelete, &$mergeWithDefault, &$handled)
         {
     
         }
     
     }
 
-    SetUpUserAuthorization();
+
 
     try
     {
-        $Page = new barangPage("barang", "barang.php", GetCurrentUserPermissionsForPage("barang"), 'UTF-8');
+        $Page = new barangPage("barang", "barang.php", GetCurrentUserPermissionSetForDataSource("barang"), 'UTF-8');
+        $Page->SetTitle('Barang');
+        $Page->SetMenuLabel('Barang');
+        $Page->SetHeader(GetPagesHeader());
+        $Page->SetFooter(GetPagesFooter());
         $Page->SetRecordPermission(GetCurrentUserRecordPermissionsForDataSource("barang"));
         GetApplication()->SetMainPage($Page);
         GetApplication()->Run();
